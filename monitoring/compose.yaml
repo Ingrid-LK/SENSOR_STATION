@@ -1,0 +1,19 @@
+version: '5.1.3' #version of docker compose
+
+services:
+
+  nodered:
+    container_name: nodered_WMSTATION
+    image: nodered/node-red:latest
+    ports:
+      - 1880:1880
+  volumes:
+        - node-red-data:/data #mount a docker named volume called `node_red_data` to the container /data directory so any changes made to flows are persisted
+  environment:
+    - TZ=Europe/Lisbon
+  restart: unless-stopped
+
+
+volumes:
+  node-red-data:
+

@@ -17,9 +17,11 @@ void controlSystem::motorControl(){
 //if auto mode
     //if 
         //if temperatature is not within the acceptable threshold
-            call motorControl::MotorON
-        // if temperature is within acceptable threshold
-            call motorControl::MotorOFF
+            if(Temp_Level= High_Temp){
+            call motorControl::MotorON}
+        // if temperature is within acceptable 
+        //elif (Temp_Level != High_Temp){
+            call motorControl::MotorOFF}
 // if manual mode
     //if there is on request received 
         call motorControl::MotorON
