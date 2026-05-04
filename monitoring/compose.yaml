@@ -12,8 +12,40 @@ services:
       - S:/OneDrive/docker_data/nodered_data:/data #save flow info in local folder instead of inside docker folder
     environment:
       - TZ=Europe/Lisbon
+    networks:
+      - monitoringNetwork
+
+  grafana:
+    container_name: grafana_WMSTATION
+    image: grafana/grafana:latest
+    ports:
+      - 8085:3000
+    volumes:
+      - grafana_2026_data:/var/lib/grafana
+    networks:
+      - monitoringNetwork
+      
 
 
+  influxdb:
+    container_name: influxdb_WMSTATION
+    image: influxdb:latest
+    ports:
+      - 8087:8086
+    volumes:
+      - influxdb_data:/var/lib/influxdb3
+    networks:
+      - monitoringNetwork
+      
+
+#We must add this in the end when named volumes have been used
 volumes:
-  node-red-data:
+  grafana_2026_data:
+  influxdb_data:
 
+
+# in the future we gotta add this to expose the container 
+networks:
+  monitoringNetwork:
+    external: true
+    name: monitoringNetwork
