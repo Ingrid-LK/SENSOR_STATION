@@ -5,14 +5,20 @@ controlSystem::controlSystem(bool mode){
 modebool= mode //0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as flag)
 }
 
+//receive control instructions and organize mqtt message received
 Control::onmessageReceived(){
 //analyze the mqtt messages received, then set flags used in other voids
 returnnnnn data so it can be accessed by other functions??
+}
+
+Control::evaluateFlags(){
+//reads flags + sensor values, decides actions
 return both of them
 setMotorON //boolean 
 setPumpON //boolean
 }
 
+//control motor
 void controlSystem::motorControl(){
 //if auto mode
     //if 
@@ -33,7 +39,7 @@ void controlSystem::motorControl(){
 
 
 
-
+//control pump
 void controlSystem::pumpControl(){
 //if auto mode
     //if water tank level ok and soil humidity low
@@ -57,6 +63,7 @@ void controlSystem::pumpControl(){
 
 }
 
+//publish state of actuators via mqtt
 void controlSystem::publishcontrolInst
 //sends the message to esp to turn on or off actuators ??
 setMotor

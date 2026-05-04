@@ -26,6 +26,7 @@ int readingsSystem::readLightIntensity(){
 }
 
 
+//publish sensor data
 readingsSystem::publishReadings(){
     //send sensor data gathered by the previous functions
     //via mqtt
