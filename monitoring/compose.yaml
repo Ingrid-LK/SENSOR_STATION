@@ -49,3 +49,6 @@ networks:
   monitoringNetwork:
     external: true
     name: monitoringNetwork
+
+
+    

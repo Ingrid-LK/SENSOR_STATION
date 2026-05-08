@@ -11,6 +11,17 @@ Control::onmessageReceived(){
 returnnnnn data so it can be accessed by other functions??
 }
 
+  if (String(topic) == "esp32/output") {
+    Serial.print("Changing output to ");
+    if(messageTemp == "on"){
+      Serial.println("on");
+      digitalWrite(ledPin, HIGH);
+    }
+    else if(messageTemp == "off"){
+      Serial.println("off");
+      digitalWrite(ledPin, LOW);
+
+
 Control::evaluateFlags(){
 //reads flags + sensor values, decides actions
 return both of them
