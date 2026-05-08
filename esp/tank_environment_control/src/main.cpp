@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include <WiFi.h> //wifi library
-#include <PubSubClient.h> //mqtt library
+#include <PubSubClient.h> //mqtt 
 
-//variables for callback function
-char received_topic[128];
-byte received_payload[128];
-unsigned int received_length;
-bool received_msg = false;
+//custom 
+#include "ControlSystem.h"
+
+const char* TOPIC_PUMP  = "control/pump";
+const char* TOPIC_MOTOR = "control/motor";
+const char* TOPIC_MODE  = "control/mode";
 
 //  Credentials for WIFI Connection 
 const char* ssid = "Cudy-4CC6";
@@ -18,48 +19,27 @@ WiFiClient TCP_Client;
 PubSubClient client(TCP_Client);
 
 
+//initialize control and reading 
+ControlSystem control;
 
-// Handle messages arrived
+
+// receive, convert, log and direct messages arrived
 void callback(char* topic, byte* payload, unsigned int length) {
+  
+  //convert received payload into usable format
+  String payloadRec = String ((char*) payload, length);
+  
+
   Serial.print("Message arrived on topic: ");
   Serial.print(topic);
   Serial.print(". Message: ");
-  String messageTemp;
-  
-  //read received payload till the end
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-    messageTemp += (char)payload[i];
-  }
-  Serial.println();
+  Serial.println(payloadRec);
 
-  
-  // Copy the payload to the new buffer, allowing data to persist outside the scope of the callback function
-  //strcpy() is for topic strings
-  //memcpy() for binary payloads
-  strcpy(received_topic, topic);
-  memcpy(received_payload, payload, length);
-  received_msg = true;
-  received_length = length;
-
-
-  
- /* if (strcmp(topic,"pir1Status")==0){
-    // whatever you want for this topic //i think it relates on acttions
-  }
-
-  if (strcmp(topic,"red")==0) {
-    // obvioulsy state of my red LED
-  }
-
-  if (strcmp(topic,"blue")==0) {
-    // this one is blue...
-  }  
-
-   if (strcmp(topic,"green")==0) {
-   // i forgot, is this orange?
-  }  */
+  //direct message received to control block
+  control.onMessageReceived(topic, payloadRec); //from control cpp
 }
+
+
 
 
 
@@ -74,10 +54,9 @@ boolean reconnect() {
   if (client.connect("esp32_1")) {
     Serial.println("hello again, world");
     //insert subscribed topics
-    client.subscribe("pir1Status");
-    client.subscribe("red");
-    client.subscribe("green");
-    client.subscribe("blue");
+    client.subscribe(TOPIC_MODE);
+    client.subscribe(TOPIC_MOTOR);
+    client.subscribe(TOPIC_PUMP);
     return client.connected();} else {
     Serial.println("Reconnection failed.");
     return 0;}
@@ -146,14 +125,12 @@ void loop() {
       }
     }
   } else {
-    // Client connected
+    //client.loop checks if new mqtt message has arrived
+    //Calls callback and handles keep alive method
     client.loop();
   }
 
 
-
-
-  
 
 
 // call reading:publishState()
