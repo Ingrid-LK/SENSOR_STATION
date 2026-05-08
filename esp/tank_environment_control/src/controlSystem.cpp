@@ -1,6 +1,7 @@
 #include "ControlSystem.h"
 #include <Arduino.h>
 
+#include <ArduinoJson.h>
 
 
 
@@ -118,7 +119,7 @@ void controlSystem::pumpControl(){
 }
 
 
-
+/* what in essence gotta be done
   if (String(topic) == "esp32/output") {
     Serial.print("Changing output to ");
     if(messageTemp == "on"){
@@ -129,12 +130,26 @@ void controlSystem::pumpControl(){
       Serial.println("off");
       digitalWrite(ledPin, LOW);
 
+*/
 
 
-
-//publish state of actuators via mqtt
+/*//publish state of actuators via mqtt
 void controlSystem::publishcontrolInst
 //sends the message to esp to turn on or off actuators ??
 Motorset //on or off
 Pumpset //on or off
-sendPumpAlarm
+sendPumpAlarm*/
+
+
+
+/**/ Creates a JsonDocument
+Fills it with your actuator states (pump, motor, alarms, mode)
+Serializes to a String
+Returns that String*/
+String ControlSystem::publishControlInst() {
+    JsonDocument doc;  // lives here, inside the function
+    // fill it
+    // serialize it
+    // return the string
+    doc["key"] = value;
+}

@@ -12,7 +12,7 @@ public:
     void onMessageReceived(char* topic , String payloadRec);
     void motorControl();
     void pumpControl();
-    void publishControlIns();
+    String publishControlIns();
 
 private:
     /* data */
