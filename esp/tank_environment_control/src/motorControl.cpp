@@ -1,11 +1,15 @@
-/*
+#include "motorControl.h"
+#include <Arduino.h>
+
+
 
 //class construction
 motorControl::motorControl(int pinmot, int pinpot){
 motor_pin = pinmot;
 pot_pin= pinpot;
-motorRunnig = false; //boolean
+motorRunning = false; //boolean
 }
+
 
 //setup of pins of motor and pot
 void motorControl::setup(){
@@ -19,18 +23,19 @@ pinMode(pot_pin, INPUT);
 //mqtt message received to turn on from controlSystem.cpp
 //if motor on flag is set, regulate the speed via the potentiometer
 //digital write pin
-//void motorControl::MotorON(){
+
+void motorControl::MotorON(){
 
 //motor is ON, read pot and set speed
-    potValue = analogRead(pot); //int
+    potValue = analogRead(pot_pin); //int
     highTime = potValue;        //int, HIGH duration
     lowTime = 4096 - potValue;  //int, LOW duration
 
     
-   motorRunning = true
-        digitalWrite(pwmPin, HIGH);
+   motorRunning = true;
+        digitalWrite(motor_pin, HIGH);
         delayMicroseconds(highTime); // another alternative for delay
-        digitalWrite(pwmPin, LOW);
+        digitalWrite(motor_pin, LOW);
         delayMicroseconds(lowTime);
 }
 
@@ -39,9 +44,9 @@ pinMode(pot_pin, INPUT);
 
 //mqtt message received to turn off controlSystem.cpp
     //digital write pin
-//void motorControl::MotorOFF(){
+void motorControl::MotorOFF(){
 
-    digitalWrite(pwmPin, LOW);
+    digitalWrite(motor_pin, LOW);
     motorRunning = false;
 
 }
@@ -55,4 +60,3 @@ pinMode(pot_pin, INPUT);
 
 
 
-*/

@@ -1,17 +1,24 @@
-/*
+#include "readLM35.h"
+#include <Arduino.h>
+
+
+
 //class constructor
-readLM35::readLM35(const int pin_LM35){
+readLM35::readLM35(int pin_LM35){
 Temp_pin = pin_LM35;
 diode_offset_voltage = 0.87; //float type (put in header file); 2 diodes ~0.4 voltage drop each, my actual value measured
 maximum_acceptable_temp = 35; //temperature can not be higher than 35 degrees
+Temp_State = normal;
 }
 
 void readLM35::setup(){
 //analog readings dont need pinMode definition
- analogSetPinAttenuation(lm35_pin, ADC_11db);  // set attenuation specifically for LM35, forces allowing reading up to 3.3V
+ analogSetPinAttenuation(Temp_pin, ADC_11db);  // set attenuation specifically for LM35, forces allowing reading up to 3.3V
 
 }
 
+
+// Read and Return the temperature value
 float readLM35::readTemp(){ //will it be float or double; also it gotta be public
 
     // STEP 1 — Read the raw number from the ESP32 ADC (0 to 4095)
@@ -31,18 +38,19 @@ float readLM35::readTemp(){ //will it be float or double; also it gotta be publi
 
     // STEP 3 — Convert voltage to temperature
     // LM35 outputs 0.010V per degree
-    float temperature_in_celsius =  true_sensor_voltage/ 0.010;
-    
+    temperature_in_celsius =  true_sensor_voltage/ 0.010;
+return temperature_in_celsius;
 
 delay(1000); //you already know we gotta change this, my love
 }
 
-readLM35::TempEVal(){
-if (temperature_in_celsius >= maximum_acceptable_temp){
-Temp_Level = High_Temp;
-} else {
-Temp_Level = Normal; 
-}
-}
 
-*/
+//return indicator that provides the temperature evaluation result
+_State readLM35::gettempEval(){
+if (temperature_in_celsius >= maximum_acceptable_temp){
+Temp_State = high_temp;
+} else {
+Temp_State = normal; 
+}
+return Temp_State;
+}

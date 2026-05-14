@@ -4,7 +4,18 @@
 #include <ArduinoJson.h>
 
 
+#include "motorControl.h"
+extern motorControl motorcontrol; //so the compiler can find the object initialized in the main.cpp
 
+#include "PumpControl.h"
+extern PumpControl pumpcontrol;
+
+#include "readLM35.h"
+extern readLM35 readtemp;
+
+
+
+//class construction
 ControlSystem::ControlSystem(){
 
 //initialize by everything off
@@ -24,7 +35,7 @@ then set flags used in other voids
 but it's considered unreliable*/
 
 //member variables are where we store the data we use
-topic_received = topic;
+topic_received = topic; //you're making it a string, can you do it or call a char instead?
 payload_received = payload;
 
 //Analyse and set flags according to the message received
@@ -63,16 +74,17 @@ setPumpON //boolean
 
 //Motor Control
 void ControlSystem::motorControl(){
-//if auto mode
+Temp_status = readtemp.gettempEval();
+    //if auto mode
 if (manual_on_request == false){
         //if temperatature is not within the acceptable threshold
-            if(Temp_Level == High_Temp){ //these variables gotta be extern or public in class
+            if(Temp_status == high_temp){ //these variables gotta be extern or public in class
             //call function that turns on motor 
-            motorControl.MotorON();}
+            motorcontrol.MotorON();}
         // if temperature is within acceptable 
-        else if (Temp_Level != High_Temp){
+        else if (Temp_status != high_temp){
             //call function that turn off the motor
-            motorControl.MotorOFF();}
+            motorcontrol.MotorOFF();}
         }
 
 // if manual mode
@@ -80,12 +92,12 @@ if (manual_on_request == true){
     //if there is on request received
     if (motor_on_request == true){ 
     //call function that turns on motor
-        motorControl.MotorON();
+        motorcontrol.MotorON();
     }
     // if there is off request received
     else if (motor_on_request == false){
         //call function that turns off the motor
-        motorControl.MotorOFF(); 
+        motorcontrol.MotorOFF(); 
 }
 }
 }
@@ -95,30 +107,38 @@ if (manual_on_request == true){
 
 //control pump
 // tentar usar switch case aqui, just for vibes
-void controlSystem::pumpControl(){
+void ControlSystem::pumpControl(){
+
 //if auto mode
+if (manual_on_request == false){
     //if water tank level ok and soil humidity low
-        call pumpControl::PumpON
+        pumpcontrol.PumpON();
 
     //if soil humidity high [within the acceptable threshold]
-        call pumpControl::PumpOFF
+        pumpcontrol.PumpOFF();
+
+//if water tank level low and soil humidity low
+//if (manual_on_request == false && alarmflagset)  
+//pumpcontrol.PumpAlarm(); //you stop pump and forward an alarm message
     
-    //if water tank level low and soil humidity low
-        call pumpControl::PumpAlarm //you stop pump and forward an alarm message
-    
-
-
-    // if manual mode
-        //if there is on request received 
-        call pumpControl::PumpON
-        // if there is off request received
-        call pumpControl::PumpOFF 
-        //if waterlevel is low and you try to turn on the pump
-        call pumpControl::PumpAlarmManual
-
 }
 
+    // if manual mode
+    // if manual mode
+if (manual_on_request == true){
+        //if there is on request received 
+        if (pump_on_request == true){ 
+        pumpcontrol.PumpON();} 
+        else if (pump_on_request == false){
+        // if there is off request received
+        pumpcontrol.PumpOFF(); }
+        
+        //if waterlevel is low and you try to turn on the pump  
+//        pumpcontrol.PumpAlarmManual();
 
+        }
+
+    }
 /* what in essence gotta be done
   if (String(topic) == "esp32/output") {
     Serial.print("Changing output to ");
@@ -142,14 +162,14 @@ sendPumpAlarm*/
 
 
 
-/**/ Creates a JsonDocument
+/** Creates a JsonDocument 
 Fills it with your actuator states (pump, motor, alarms, mode)
 Serializes to a String
 Returns that String*/
-String ControlSystem::publishControlInst() {
-    JsonDocument doc;  // lives here, inside the function
-    // fill it
-    // serialize it
-    // return the string
-    doc["key"] = value;
-}
+//String ControlSystem::publishControlInst() {
+//    JsonDocument doc;  // lives here, inside the function
+//    // fill it
+//    // serialize it
+//    // return the string
+//    doc["key"] = value;
+//}

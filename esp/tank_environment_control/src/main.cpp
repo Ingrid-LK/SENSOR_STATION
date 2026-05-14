@@ -2,9 +2,32 @@
 #include <WiFi.h> //wifi library
 #include <PubSubClient.h> //mqtt 
 
-//custom 
+//custom objects
 #include "ControlSystem.h"
+#include "motorControl.h"
+#include "PumpControl.h"
+#include "readLM35.h"
 
+
+//pins
+const int motor_pin=1;
+const int pot_pin= 2;
+const int pump_pin=3;
+const int lm35pin=4;
+
+//initialize control and reading 
+ControlSystem control;
+motorControl motorcontrol(motor_pin, pot_pin);
+PumpControl pumpcontrol(pump_pin);
+readLM35 readtemp(lm35pin);
+
+
+
+
+
+
+
+// Connections
 const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";
@@ -18,9 +41,6 @@ const char* mqtt_server = "192.168.1.68";
 WiFiClient TCP_Client;
 PubSubClient client(TCP_Client);
 
-
-//initialize control and reading 
-ControlSystem control;
 
 
 // receive, convert, log and direct messages arrived
@@ -70,6 +90,25 @@ boolean reconnect() {
 
 
 void setup() {
+
+
+//*******init pins******* */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //***************init WiFi connection**********************
 Serial.println(); 
