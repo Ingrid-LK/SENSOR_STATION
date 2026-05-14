@@ -7,6 +7,10 @@
 #include "motorControl.h"
 #include "PumpControl.h"
 #include "readLM35.h"
+#include "readDHT22.h"
+#include "readSoilHumidity.h"
+#include "readWaterLevel.h"
+#include "readPhotoresistor.h"
 
 
 //pins
@@ -14,13 +18,22 @@ const int motor_pin=1;
 const int pot_pin= 2;
 const int pump_pin=3;
 const int lm35pin=4;
+const int dht22pin=5;
+const int soilsensorpin=6;
+const int watersensorpin=7;
+const int photorespin=8;
 
-//initialize control and reading 
+//initialize control and reading object class created
 ControlSystem control;
 motorControl motorcontrol(motor_pin, pot_pin);
 PumpControl pumpcontrol(pump_pin);
 readLM35 readtemp(lm35pin);
-
+readDHT22 readHMDT(dht22pin);
+readSoilHumidity readsoil(soilsensorpin);
+readWaterLevel readWtrLevel(watersensorpin);
+/*
+readPhotoresistor readlighInt (photorespin);
+*/
 
 
 
