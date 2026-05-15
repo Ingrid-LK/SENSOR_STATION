@@ -2,10 +2,14 @@
 #define READ_SOIL_HUMIDTY_H
 
 
-enum _Wstate{
+enum _Hstate{
     dry,
-    good
+    good,
+    excess
 };
+
+
+
 
 class readSoilHumidity
 {
@@ -13,12 +17,15 @@ private:
     /* data */
     int sensor_pin;
     double soil_HMDT;
+    //analogRead=4095 dry soil; from 2120 wet/good; from 1470 excess water
     double lowest_acceptable_HMDT;
-    _Wstate soil_state;
+    double max_acceptable_HMDT;
+    int percentage_hmdt;
+    _Hstate soil_state;
 public:
     readSoilHumidity(int pin);
     float getSoilHMDT();
-    _Wstate getSoilHMDT_state();
+    _Hstate getSoilHMDT_state();
 };
 
 

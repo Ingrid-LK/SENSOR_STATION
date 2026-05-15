@@ -12,6 +12,11 @@ extern PumpControl pumpcontrol;
 #include "readLM35.h"
 extern readLM35 readtemp;
 
+#include "readSoilHumidity.h"
+extern readSoilHumidity readsoil;
+
+#include "readWaterLevel.h"
+extern readWaterLevel readwater;
 
 
 
@@ -66,13 +71,7 @@ if (strcmp(topic_received, TOPIC_MODE) == 0){
 
 
 
-//dont know if it is needed or not 
-/*int Control::evaluateFlags(){
-//reads flags + sensor values, decides actions
-return both of them
-setMotorON //boolean 
-setPumpON //boolean
-}*/
+
 
 //Motor Control
 void ControlSystem::motorControl(){
@@ -114,23 +113,29 @@ if (manual_on_request == true){
 //control pump
 // tentar usar switch case aqui, just for vibes
 void ControlSystem::pumpControl(){
-
+water_level_status = readwater.getWaterlevel();
+soil_hmdt_status= readsoil.getSoilHMDT_state(); 
 //falta get humidity and water level read
 
 //if auto mode
 if (manual_on_request == false){
     //if water tank level ok and soil humidity low
-        pumpcontrol.PumpON();
-
-
-    //if soil humidity high [within the acceptable threshold]
+        if (water_level_status == full && soil_hmdt_status == dry  )
+        {  /* code */
+         pumpcontrol.PumpON();
+         pump_set_on = true;
+        } else if (water_level_status == empty || soil_hmdt_status == excess) //|| soul_hmdt_status == good; i still dont think humidity should turn off my water pump
+        {
+            //if soil humidity high [within the acceptable threshold]
         pumpcontrol.PumpOFF();
-
+        pump_set_on = false;
+        }
+      
+    }
 //if water tank level low and soil humidity low
 //if (manual_on_request == false && alarmflagset)  
 //pumpcontrol.PumpAlarm(); //you stop pump and forward an alarm message
     
-}
 
     // if manual mode
     // if manual mode
@@ -150,6 +155,14 @@ if (manual_on_request == true){
         }
 
     }
+
+
+
+
+
+
+
+
 /* what in essence gotta be done
   if (String(topic) == "esp32/output") {
     Serial.print("Changing output to ");
@@ -164,20 +177,7 @@ if (manual_on_request == true){
 */
 
 
-/*//publish state of actuators via mqtt
-void controlSystem::publishcontrolInst
-//sends the message to esp to turn on or off actuators ??
-Motorset //on or off
-Pumpset //on or off
-sendPumpAlarm*/
 
-
-//Publish the changes mad3
-
-/** Creates a JsonDocument 
-Fills it with your actuator states (pump, motor, alarms, mode)
-Serializes to a String
-Returns that String*/
 
 
 // Method that organizes control information that will be published via MQTT
@@ -200,8 +200,5 @@ serializeJson(doc, ControlOutput);
 
 return ControlOutput; //String that will be published
 }
-/* where do i get thiss valuesss again?
- is it after i turn on in here i set the value? 
-*/
-//}
+
 

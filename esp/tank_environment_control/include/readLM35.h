@@ -2,7 +2,7 @@
 #define READ_LM35_H
 
 enum _State{
-    normal, //0
+    normal_temp, //0
     high_temp //1
 
 };

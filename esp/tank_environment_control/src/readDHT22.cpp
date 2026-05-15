@@ -2,16 +2,49 @@
 #include "DHT.h"
 
 
+readDHT22::readDHT22(int pin){
+hmdt_pin = pin;
+}
+
+
+float readDHT22::get_hmdt(){
+
+DHT dht_read(hmdt_pin, DHT22);
+
+  switch(dht_read.read())
+  {
+    case DHT_OK:
+      hmdt_value=dht_read.humidity;
+    return hmdt_value;
+      break;
+    case DHT_ERR_CHECK:
+        Serial.println("DHT CHECK ERROR");break;
+    case DHT_ERR_TIMEOUT:
+        Serial.println("DHT TIMEOUT EEROR");break;
+    default:
+        Serial.println("UNKNOWN EEROR");break;
+    }
+    delay(2000); //already know we gotta change
+}
+
+
+
+
+
+/*
 #define DHTPIN 2     // what pin we're connected to
 
-DHT dht(DHTPIN, DHT22);
+DHT dht_read(DHTPIN, DHT22);
+*/
 
+  /*
 void setup() 
 {
     Serial.begin(9600); 
     Serial.println("************ DHTxx test! ************");
     delay(2000);
 }
+
 
 void loop() 
 {
@@ -34,3 +67,4 @@ void loop()
     }
     delay(2000);
 }
+*/

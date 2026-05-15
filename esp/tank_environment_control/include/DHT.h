@@ -3,7 +3,6 @@
 #ifndef DHT_h
 #define DHT_h
 
-//(#include <avr/io.h>
 #include <arduino.h>
 
 #define DHT_OK			1

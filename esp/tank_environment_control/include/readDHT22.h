@@ -4,12 +4,17 @@
 #include "DHT.h"
 
 
+
 class readDHT22
 {
 private:
     /* data */
+    int hmdt_pin;
+    float hmdt_value;
+    
 public:
     readDHT22(int pin);
+    float get_hmdt();
 };
 
 

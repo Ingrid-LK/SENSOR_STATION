@@ -3,11 +3,12 @@
 #define CONTROL_SYSTEM_H
 
 #include "readLM35.h" // so we guarantee Temp_status is persistently well defined
+#include "readSoilHumidity.h"
+#include "readWaterLevel.h"
 
 
 class ControlSystem
 {
-
 public:
     ControlSystem(); //class constructor
     void onMessageReceived(char* topic , String payloadRec);
@@ -37,7 +38,8 @@ bool motor_set_on;
 
 int modebool; //contains the mode of control; 0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as flag)
 _State Temp_status;
-
+_Hstate soil_hmdt_status;
+_waterstate water_level_status;
 
 
 };

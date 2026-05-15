@@ -165,7 +165,8 @@ lastReconnectAttempt = 0; //dont actually know if it is still necessary after i 
 }
 
 void loop() {
-  
+
+//MQTT SUBSCRIPTION
 //Non blocking way of keeping connection alive. Reconnection attempt with 5 seconds delay for each attempt. Non blocking loop
   if (!client.connected()) {
     long now = millis();
@@ -185,12 +186,19 @@ void loop() {
 
 
 
+
 // call reading:publishState()
 
+
 //periodically call
-// control::evaluateFlags()
+  // control::evaluateFlags()
 
 
+//MQTT PUBLISHING
+/* topic:    "status/control"
+payload:  {"pump":"on","motor":"off","pump_alarm":"off","motor_alarm":"off","mode":"auto"}*/
+String payload = control.publishControlStatus();
+client.publish("status/control", payload.c_str());
  
 }
 
