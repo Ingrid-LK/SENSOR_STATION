@@ -1,5 +1,4 @@
 
-
 #if !defined(CONTROL_SYSTEM_H)
 #define CONTROL_SYSTEM_H
 
@@ -14,7 +13,7 @@ public:
     void onMessageReceived(char* topic , String payloadRec);
     void motorControl();
     void pumpControl();
-    String publishControlIns();
+    String publishControlStatus();
 
 private:
     /* data */
@@ -27,10 +26,15 @@ const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";
 
-//variables
+//variables received via mqtt
 bool pump_on_request;
 bool motor_on_request;
 bool manual_on_request;
+
+//flags set after conditions evaluation
+bool pump_set_on;
+bool motor_set_on;
+
 int modebool; //contains the mode of control; 0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as flag)
 _State Temp_status;
 

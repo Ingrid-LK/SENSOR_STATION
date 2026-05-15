@@ -1,6 +1,5 @@
 #include "ControlSystem.h"
 #include <Arduino.h>
-
 #include <ArduinoJson.h>
 
 
@@ -15,6 +14,7 @@ extern readLM35 readtemp;
 
 
 
+
 //class construction
 ControlSystem::ControlSystem(){
 
@@ -23,6 +23,8 @@ modebool= 1; //0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as
 pump_on_request = false;
 motor_on_request = false;
 manual_on_request = false;
+pump_set_on = false;
+motor_set_on = false;
 }
 
 //receive control instructions and organize mqtt messages received
@@ -80,11 +82,13 @@ if (manual_on_request == false){
         //if temperatature is not within the acceptable threshold
             if(Temp_status == high_temp){ //these variables gotta be extern or public in class
             //call function that turns on motor 
-            motorcontrol.MotorON();}
+            motorcontrol.MotorON();
+            motor_set_on = true;}
         // if temperature is within acceptable 
         else if (Temp_status != high_temp){
             //call function that turn off the motor
-            motorcontrol.MotorOFF();}
+            motorcontrol.MotorOFF();
+            motor_set_on= false;}
         }
 
 // if manual mode
@@ -93,11 +97,13 @@ if (manual_on_request == true){
     if (motor_on_request == true){ 
     //call function that turns on motor
         motorcontrol.MotorON();
+        motor_set_on=true;
     }
     // if there is off request received
     else if (motor_on_request == false){
         //call function that turns off the motor
-        motorcontrol.MotorOFF(); 
+        motorcontrol.MotorOFF();
+        motor_set_on=false; 
 }
 }
 }
@@ -109,10 +115,13 @@ if (manual_on_request == true){
 // tentar usar switch case aqui, just for vibes
 void ControlSystem::pumpControl(){
 
+//falta get humidity and water level read
+
 //if auto mode
 if (manual_on_request == false){
     //if water tank level ok and soil humidity low
         pumpcontrol.PumpON();
+
 
     //if soil humidity high [within the acceptable threshold]
         pumpcontrol.PumpOFF();
@@ -128,10 +137,12 @@ if (manual_on_request == false){
 if (manual_on_request == true){
         //if there is on request received 
         if (pump_on_request == true){ 
-        pumpcontrol.PumpON();} 
+        pumpcontrol.PumpON();
+        pump_set_on = true;} 
         else if (pump_on_request == false){
         // if there is off request received
-        pumpcontrol.PumpOFF(); }
+        pumpcontrol.PumpOFF(); 
+        pump_set_on = false;}
         
         //if waterlevel is low and you try to turn on the pump  
 //        pumpcontrol.PumpAlarmManual();
@@ -161,15 +172,36 @@ Pumpset //on or off
 sendPumpAlarm*/
 
 
+//Publish the changes mad3
 
 /** Creates a JsonDocument 
 Fills it with your actuator states (pump, motor, alarms, mode)
 Serializes to a String
 Returns that String*/
-//String ControlSystem::publishControlInst() {
-//    JsonDocument doc;  // lives here, inside the function
-//    // fill it
-//    // serialize it
-//    // return the string
-//    doc["key"] = value;
+
+
+// Method that organizes control information that will be published via MQTT
+String ControlSystem::publishControlStatus(){
+    
+ JsonDocument doc;  // where my data will live
+
+//Fill the json document
+// variable = (condition) ? "value if true" : "value if false";
+doc["mode"] = (manual_on_request) ? "man" : "auto"; //man or auto
+doc["pump"] = (motor_set_on) ? "on" : "off";
+doc["pump"] = (pump_set_on) ? "on" : "off";
+
+// doc["pump_alarm"] = value; // on or off
+ //  doc["motor alarm"] = value; // on or 
+
+String ControlOutput; // destination string of the updates
+
+serializeJson(doc, ControlOutput);
+
+return ControlOutput; //String that will be published
+}
+/* where do i get thiss valuesss again?
+ is it after i turn on in here i set the value? 
+*/
 //}
+
