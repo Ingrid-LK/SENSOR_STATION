@@ -1,33 +1,24 @@
+#include <Arduino.h>
+#include "readPhotoresistor.h"
 
-
-
-
-
-int photoPin = 32;
-void setup() {
-  // put your setup code here, to run once:
-
-//pinMode(photoPin, INPUT); //yellow not needed since pinMode is only for digital pins
-  
-Serial.begin(115200);
-
-
+readPhotoresistor::readPhotoresistor(int pin){
+  photo_pin = pin;
 }
 
+void readPhotoresistor::readPhoto(){
+  photores_value= analogRead(photo_pin);
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  int light = analogRead(photoPin);
+//map(value, fromLow, fromHigh, toLow, toHigh)
+  mapped_light_value = map (photores_value, 0, 4095, 0, 100);
 
-  Serial.println(light);
-  
-  delay(1000);
-
-
-  //MISSSING VALUE MAP 
-  //OF THE FINAL VALUE 
-//SO YOU CAN TRIGGER TURN OFF THE LIGHTS OR SOMETHING LIKE THAT
-// also dont know if i will just output a state like (good light, acceptable and bad light) 
-//instead of proper value 
-  
+  if (mapped_light_value <= 30){
+    light_state = "LOW";
+  }else {
+    light_state = "GOOD";
+  }
 }
+
+String readPhotoresistor::getLightEval(){
+return light_state;
+}
+
