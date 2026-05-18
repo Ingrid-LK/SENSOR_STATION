@@ -18,14 +18,14 @@
 
 
 //pins
-const int motor_pin=1;
-const int pot_pin= 2;
-const int pump_pin=3;
-const int lm35pin=4;
-const int dht22pin=5;
-const int soilsensorpin=6;
-const int watersensorpin=7;
-const int photorespin=8;
+const int motor_pin=12;
+const int pot_pin= 4;
+const int pump_pin=13;
+const int lm35pin=35;
+const int dht22pin=34;
+const int soilsensorpin=26;
+const int watersensorpin=23;
+const int photorespin=32;
 
 
 
@@ -61,7 +61,7 @@ const char* TOPIC_MODE  = "control/mode";
 
 //  Credentials for WIFI Connection 
 const char* ssid = "Cudy-4CC6";
-const char* password = "password123";
+const char* password = "63827361CHANGE!";
 const char* mqtt_server = "192.168.1.68";
 
 //create an instance of a mqtt client object
@@ -101,9 +101,10 @@ boolean reconnect() {
   if (client.connect("esp32_1")) {
     Serial.println("hello again, world");
     //insert subscribed topics
-    client.subscribe(TOPIC_MODE);
-    client.subscribe(TOPIC_MOTOR);
-    client.subscribe(TOPIC_PUMP);
+    // subscribe with QoS 1
+    client.subscribe(TOPIC_MODE, 1);
+    client.subscribe(TOPIC_MOTOR, 1);
+    client.subscribe(TOPIC_PUMP, 1);
     return client.connected();} else {
     Serial.println("Reconnection failed.");
     return 0;}
@@ -118,21 +119,11 @@ boolean reconnect() {
 
 void setup() {
 
+Serial.begin(115200);
 
-//*******init pins******* */
-
-
-
-
-
-
-
-
-
-
-
-
-
+//*******init necessary pins******* */
+readtemp.setup();
+readWtrLevel.setup();
 
 
 
@@ -159,16 +150,20 @@ client.setCallback(callback); //call back function so we can receive messages
 
 //boolean connect (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])
 //connecting by providing our mqtt id
-//gotta check the parameters because i actually want the will retain, i want when someone to connect be able to receive the last topic
-client.connect("esp32_1","ing_at_home","limitless",NULL,NULL,NULL,NULL,false);
+//gotta check the parameters because i actually want the 
+//I want a last will message 
+//i want as soon as someone connect to be able to receive the last topic
+//QOS = 1 since is the standard in IOT
+//clean session false — broker remembers the client and queues any missed QoS 1 messages while it was offline, delivering them when it reconnects
+client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false);
 
 
 //subscribe to control topics
 //subscribe(topic,qos)
-client.subscribe("test");
-client.subscribe("ctrMotor");
-client.subscribe("ctrEVin");
-client.subscribe("ctrEVout");
+// subscribe with QoS 1
+client.subscribe(TOPIC_MODE,1);
+client.subscribe(TOPIC_MOTOR,1);
+client.subscribe(TOPIC_PUMP,1);
 
 lastReconnectAttempt = 0; //dont actually know if it is still necessary after i have already written it on the top
 
@@ -199,24 +194,26 @@ void loop() {
 
 
 
-//MQTT PUBLISHING every 500ms
+//MQTT PUBLISHING sensor data every 500ms
 if (millis() - last_r_evaluate >= 500){
   last_r_evaluate = millis();
   readings.evaluate();
   /* topic:    "status/sensors"*/
   String r_payload = readings.publishReadings();
-  client.publish("status/sensors", r_payload.c_str());
+  //retained message = true
+  client.publish("status/sensors", r_payload.c_str(), true);
 }
 
 
-//MQTT PUBLISHING every 1500ms
+//MQTT PUBLISHING New control status every 1500ms
 if (millis() - last_c_evaluate >= 1500){
   last_c_evaluate= millis();  
   control.controlevaluate();  
   /* topic:    "status/control"
   payload:  {"pump":"on","motor":"off","pump_alarm":"off","motor_alarm":"off","mode":"auto"}*/
   String c_payload = control.publishControlStatus();
-  client.publish("status/control", c_payload.c_str());
+  //retained message = true
+  client.publish("status/control", c_payload.c_str(), true);
 }
 
 
