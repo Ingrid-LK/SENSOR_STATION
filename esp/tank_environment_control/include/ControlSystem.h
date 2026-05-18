@@ -5,6 +5,7 @@
 #include "readLM35.h" // so we guarantee Temp_status is persistently well defined
 #include "readSoilHumidity.h"
 #include "readWaterLevel.h"
+#include <Arduino.h>
 
 
 class ControlSystem

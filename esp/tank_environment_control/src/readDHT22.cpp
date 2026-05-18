@@ -32,6 +32,7 @@ DHT dht_read(hmdt_pin, DHT22);
       }
 }
 
+}
 
 
 

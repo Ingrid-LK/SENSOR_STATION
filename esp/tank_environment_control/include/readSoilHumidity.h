@@ -1,5 +1,5 @@
 #if !defined(READ_SOIL_HUMIDITY_H)
-#define READ_SOIL_HUMIDTY_H
+#define READ_SOIL_HUMIDITY_H
 
 
 enum _Hstate{

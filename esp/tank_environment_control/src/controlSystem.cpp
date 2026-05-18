@@ -16,7 +16,7 @@ extern readLM35 readtemp;
 extern readSoilHumidity readsoil;
 
 #include "readWaterLevel.h"
-extern readWaterLevel readwater;
+extern readWaterLevel readWtrLevel;
 
 
 
@@ -114,7 +114,7 @@ if (manual_on_request == true){
 //control pump
 // tentar usar switch case aqui, just for vibes
 void ControlSystem::pumpControl(){
-water_level_status = readwater.getWaterlevel();
+water_level_status = readWtrLevel.getWaterlevel();
 soil_hmdt_status= readsoil.getSoilHMDT_state(); 
 //falta get humidity and water level read
 

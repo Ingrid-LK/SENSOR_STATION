@@ -17,7 +17,7 @@ extern readWaterLevel readWtrLevel;
 
 
 #include "readPhotoresistor.h"
-extern readPhotoresistor readLighInt;
+extern readPhotoresistor readlighInt;
 
 
 
@@ -55,7 +55,7 @@ float readingsSystem::getSoilHMDTvalue(){
 
 String readingsSystem::getPhotoresValue(){
     //return/acess the value from photoresistor
-    lighInt = readLighInt.getLightEval();
+    lighInt = readlighInt.getLightEval();
     return lighInt;
 }
 

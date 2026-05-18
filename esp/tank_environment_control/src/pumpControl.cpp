@@ -29,7 +29,9 @@ digitalWrite(pump_relay_pin,HIGH); // PUMP is off
     // dont know what to do over here yet, since auto and manual is already in controlsystem.cpp
     // and over here we just should evaluate the conditions
     //if water tank level low and soil humidity low
-bool PumpControl::PumpAlarmAuto(){ 
+
+/*
+    bool PumpControl::PumpAlarmAuto(){ 
 //you stop pump IF ON and forward an alarm message VIA MQTT
 //return alarm message?
 }
@@ -39,4 +41,6 @@ bool PumpControl::PumpAlarmManual(){
 //return alarm message?
 }
 
+
+*/
 
