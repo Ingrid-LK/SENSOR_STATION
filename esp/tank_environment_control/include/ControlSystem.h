@@ -14,6 +14,7 @@ public:
     void onMessageReceived(char* topic , String payloadRec);
     void motorControl();
     void pumpControl();
+    void controlevaluate();
     String publishControlStatus();
 
 private:

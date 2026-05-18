@@ -22,6 +22,13 @@ private:
     double max_acceptable_HMDT;
     int percentage_hmdt;
     _Hstate soil_state;
+
+
+
+    //timer functions
+    unsigned long last_read = 0;
+    unsigned long read_interval = 500;  
+    
 public:
     readSoilHumidity(int pin);
     float getSoilHMDT();

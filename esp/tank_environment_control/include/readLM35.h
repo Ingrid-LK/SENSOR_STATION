@@ -18,6 +18,11 @@ int  maximum_acceptable_temp;
 float temperature_in_celsius;
 _State Temp_State;
 
+
+ //timer functions
+unsigned long last_read = 0;
+unsigned long read_interval = 2000;  
+
 public:
 readLM35(int pin);
 void setup();

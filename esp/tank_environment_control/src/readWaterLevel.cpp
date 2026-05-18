@@ -12,17 +12,19 @@ void readWaterLevel:: setup() {
 }
 
 _waterstate readWaterLevel:: getWaterlevel(){
+  
+  //sensor reading delay
+  if (millis() - last_read >= read_interval) {
+        last_read = millis();
+        water_level = digitalRead(level_sensor_pin);
 
-water_level = digitalRead(level_sensor_pin);
-
-if (water_level == 0){
-waterstate = empty;
-} else if (water_level == 1){
-waterstate = full;
-}
+        if (water_level == 0){
+        waterstate = empty;
+        } else if (water_level == 1){
+        waterstate = full;
+        }
+      }
 return waterstate;
-
-delay(500); // already know we gotta change here
 
 }
 

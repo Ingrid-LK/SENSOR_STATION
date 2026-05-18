@@ -7,24 +7,29 @@ hmdt_pin = pin;
 }
 
 
+//if it goes bad probably should be a char 
+//and not simply float
+
+
 float readDHT22::get_hmdt(){
 
 DHT dht_read(hmdt_pin, DHT22);
 
-  switch(dht_read.read())
-  {
-    case DHT_OK:
-      hmdt_value=dht_read.humidity;
-    return hmdt_value;
-      break;
-    case DHT_ERR_CHECK:
-        Serial.println("DHT CHECK ERROR");break;
-    case DHT_ERR_TIMEOUT:
-        Serial.println("DHT TIMEOUT EEROR");break;
-    default:
-        Serial.println("UNKNOWN EEROR");break;
-    }
-    delay(2000); //already know we gotta change
+ if (millis() - last_read >= read_interval) {
+  last_read = millis();
+    switch(dht_read.read())
+    {
+      case DHT_OK:
+        hmdt_value=dht_read.humidity;
+      return hmdt_value;
+        break;
+      case DHT_ERR_CHECK:
+          Serial.println("DHT CHECK ERROR");break;
+      case DHT_ERR_TIMEOUT:
+          Serial.println("DHT TIMEOUT EEROR");break;
+      default:
+          Serial.println("UNKNOWN EEROR");break;
+      }
 }
 
 

@@ -11,10 +11,14 @@ soil_state = dry;
 
 //return humidity reading value
 float readSoilHumidity::getSoilHMDT(){
-    soil_HMDT = analogRead(sensor_pin);
-    percentage_hmdt = map(soil_HMDT, 490, 4095, 100, 0);  // 4095 means dry soil, Map the analog value to a percentage value between 0 and 100
-return percentage_hmdt;
-delay(500); //already know we gotta change here
+
+    if (millis() - last_read >= read_interval) {
+        last_read = millis();
+        soil_HMDT = analogRead(sensor_pin);
+        percentage_hmdt = map(soil_HMDT, 490, 4095, 100, 0);  // 4095 means dry soil, Map the analog value to a percentage value between 0 and 100
+    }
+        return percentage_hmdt;
+//delay(500); //already know we gotta change here
 }
 
 //return indicator that provides the soil humidity evaluation result

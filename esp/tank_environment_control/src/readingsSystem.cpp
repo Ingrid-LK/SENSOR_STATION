@@ -1,5 +1,7 @@
 #include "readingsSystem.h"
 #include <Arduino.h>
+#include <ArduinoJson.h>
+
 
 #include "readDHT22.h"
 extern readDHT22 readHMDT;
@@ -13,10 +15,10 @@ extern readSoilHumidity readsoil;
 #include "readWaterLevel.h"
 extern readWaterLevel readWtrLevel;
 
-/*
+
 #include "readPhotoresistor.h"
 extern readPhotoresistor readLighInt;
-*/
+
 
 
 
@@ -34,11 +36,12 @@ float readingsSystem::getTempValue(){
 
 float readingsSystem::getHMDTvalue(){
     //return/acess the value from DHT22 sensor
-    //hmdt_value = readHMDT.
+    hmdt_value = readHMDT.get_hmdt();
+    return hmdt_value;
 
 }
 
-int readingsSystem::getWaterLevel(){
+_waterstate readingsSystem::getWaterLevel(){
     //return/acess the value from level sensor
     water_value = readWtrLevel.getWaterlevel();
     return water_value;
@@ -50,13 +53,43 @@ float readingsSystem::getSoilHMDTvalue(){
     return soil_hmdt_value;
 }
 
-float readingsSystem::getPhotoresValue(){
+String readingsSystem::getPhotoresValue(){
     //return/acess the value from photoresistor
-    //lighInt = readLighInt.
+    lighInt = readLighInt.getLightEval();
+    return lighInt;
 }
 
+//orchestrate functions calling
+void readingsSystem::evaluate(){
+        getTempValue();
+        getSoilHMDTvalue();
+        getWaterLevel();
+        getPhotoresValue();
+        getHMDTvalue();
+}
+
+
+String readingsSystem::publishReadings(){
+    JsonDocument readsdoc; 
+
+    readsdoc["temperature"]= temp_value;
+    readsdoc["humidity"]= hmdt_value;
+    readsdoc["light"] = lighInt;
+    readsdoc["tank_level"]= water_value;
+    readsdoc["soil_humidity"]=soil_hmdt_value;
+
+String ReadingsOutput; // destination string for the updates
+
+serializeJson(readsdoc, ReadingsOutput);
+
+return ReadingsOutput;
+
+}
+
+
+
 // now create a
-getAllReadings() //this is the thing that will be called in the main.cpp
+//getAllReadings() //this is the thing that will be called in the main.cpp
                 //it will encapsulate everything and you wont need to call each of them
 
 //that organizes all the data in a array and then in the json document

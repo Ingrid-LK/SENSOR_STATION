@@ -33,6 +33,7 @@ motor_set_on = false;
 }
 
 //receive control instructions and organize mqtt messages received
+//already called by callback function in subscribe
 void ControlSystem::onMessageReceived( char* topic, String payload){
 
     /*analyze the mqtt messages received, 
@@ -176,9 +177,11 @@ if (manual_on_request == true){
 
 */
 
-
-
-
+//orchestrate functions calling
+void ControlSystem::controlevaluate(){
+motorControl();
+pumpControl();
+}
 
 // Method that organizes control information that will be published via MQTT
 String ControlSystem::publishControlStatus(){
@@ -194,7 +197,7 @@ doc["pump"] = (pump_set_on) ? "on" : "off";
 // doc["pump_alarm"] = value; // on or off
  //  doc["motor alarm"] = value; // on or 
 
-String ControlOutput; // destination string of the updates
+String ControlOutput; 
 
 serializeJson(doc, ControlOutput);
 

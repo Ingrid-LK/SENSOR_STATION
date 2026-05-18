@@ -16,6 +16,11 @@ private:
     int water_level;
     int level_sensor_pin;
     _waterstate waterstate;
+
+    //timer functions
+    unsigned long last_read = 0;
+    unsigned long read_interval = 500;  
+
 public:
     readWaterLevel(int sensor_pin);
     void setup();

@@ -11,6 +11,10 @@
 #include "readSoilHumidity.h"
 #include "readWaterLevel.h"
 #include "readPhotoresistor.h"
+#include "readingsSystem.h"
+
+
+
 
 
 //pins
@@ -23,17 +27,27 @@ const int soilsensorpin=6;
 const int watersensorpin=7;
 const int photorespin=8;
 
+
+
+//timer variables
+//control cpp evaluate timer
+unsigned long last_c_evaluate=0;
+
+//readings cpp evaluate timer
+unsigned long last_r_evaluate=0;
+
+
 //initialize control and reading object class created
 ControlSystem control;
+readingsSystem readings;
 motorControl motorcontrol(motor_pin, pot_pin);
 PumpControl pumpcontrol(pump_pin);
 readLM35 readtemp(lm35pin);
 readDHT22 readHMDT(dht22pin);
 readSoilHumidity readsoil(soilsensorpin);
 readWaterLevel readWtrLevel(watersensorpin);
-/*
 readPhotoresistor readlighInt (photorespin);
-*/
+
 
 
 
@@ -185,20 +199,26 @@ void loop() {
 
 
 
+//MQTT PUBLISHING every 500ms
+if (millis() - last_r_evaluate >= 500){
+  last_r_evaluate = millis();
+  readings.evaluate();
+  /* topic:    "status/sensors"*/
+  String r_payload = readings.publishReadings();
+  client.publish("status/sensors", r_payload.c_str());
+}
 
 
-// call reading:publishState()
+//MQTT PUBLISHING every 1500ms
+if (millis() - last_c_evaluate >= 1500){
+  last_c_evaluate= millis();  
+  control.controlevaluate();  
+  /* topic:    "status/control"
+  payload:  {"pump":"on","motor":"off","pump_alarm":"off","motor_alarm":"off","mode":"auto"}*/
+  String c_payload = control.publishControlStatus();
+  client.publish("status/control", c_payload.c_str());
+}
 
 
-//periodically call
-  // control::evaluateFlags()
-
-
-//MQTT PUBLISHING
-/* topic:    "status/control"
-payload:  {"pump":"on","motor":"off","pump_alarm":"off","motor_alarm":"off","mode":"auto"}*/
-String payload = control.publishControlStatus();
-client.publish("status/control", payload.c_str());
- 
 }
 

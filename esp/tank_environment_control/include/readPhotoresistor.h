@@ -13,6 +13,10 @@ private:
     float photores_value;
     String light_state;
 
+    //timer functions
+    unsigned long last_read = 0;
+    unsigned long read_interval = 2000;  
+
 public:
     readPhotoresistor(int pin);
     void readPhoto();

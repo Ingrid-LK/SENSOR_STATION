@@ -11,6 +11,10 @@ private:
     /* data */
     int hmdt_pin;
     float hmdt_value;
+
+      //timer functions
+    unsigned long last_read = 0;
+    unsigned long read_interval = 500;  
     
 public:
     readDHT22(int pin);
