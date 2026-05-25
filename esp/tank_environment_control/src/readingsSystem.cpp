@@ -41,20 +41,33 @@ float readingsSystem::getHMDTvalue(){
 
 }
 
-_waterstate readingsSystem::getWaterLevel(){
+String readingsSystem::getWaterLevel(){
     //return/acess the value from level sensor
     water_value = readWtrLevel.getWaterlevel();
-    return water_value;
+    if (water_value == empty){
+        water_level= "empty";
+    } else if (water_value == full){
+        water_level= "full";
+    }
+return water_level;
 }
 
-float readingsSystem::getSoilHMDTvalue(){
-    //return/acess the value from soil sensor
-    soil_hmdt_value = readsoil.getSoilHMDT();
-    return soil_hmdt_value;
+String readingsSystem::getSoilHMDTvalue(){
+    //return/acess the value from soil 
+    readsoil.getSoilHMDT();
+    soil_hmdt_value = readsoil.getSoilHMDT_state();
+    switch (soil_state_string)
+    {
+    case dry: return "dry";
+    case good: return "good";
+    case excess: return "excess";
+    default:    return "unkown";
+    }
 }
 
 String readingsSystem::getPhotoresValue(){
-    //return/acess the value from photoresistor
+    //return/acess the value from 
+    readlighInt.readPhoto();
     lighInt = readlighInt.getLightEval();
     return lighInt;
 }
@@ -62,7 +75,7 @@ String readingsSystem::getPhotoresValue(){
 //orchestrate functions calling
 void readingsSystem::evaluate(){
         getTempValue();
-        getSoilHMDTvalue();
+//        getSoilHMDTvalue(); //maybe delete this
         getWaterLevel();
         getPhotoresValue();
         getHMDTvalue();
@@ -75,8 +88,13 @@ String readingsSystem::publishReadings(){
     readsdoc["temperature"]= temp_value;
     readsdoc["humidity"]= hmdt_value;
     readsdoc["light"] = lighInt;
-    readsdoc["tank_level"]= water_value;
-    readsdoc["soil_humidity"]=soil_hmdt_value;
+
+    readsdoc["tank_level"]= water_level;
+
+    
+   // readsdoc["soil_humidity"]=soil_hmdt_value;
+
+    readsdoc["soil_humidity"]= getSoilHMDTvalue();
 
 String ReadingsOutput; // destination string for the updates
 

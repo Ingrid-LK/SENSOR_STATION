@@ -17,8 +17,11 @@ class readingsSystem
 private:
     /* data */ 
   float temp_value;
-  float soil_hmdt_value;
+  String water_level;
+  String soil_hmdt_value;
   String lighInt;
+  String soil_hmdt_state_value;
+  _Hstate soil_state_string;
   float hmdt_value;
   _waterstate water_value; //dont know if i just dont get the state and send it via storage in other variable
 
@@ -30,8 +33,8 @@ public:
     readingsSystem();
     void evaluate();
     float getTempValue();
-    float getSoilHMDTvalue();
-    _waterstate getWaterLevel();
+    String getSoilHMDTvalue();
+    String getWaterLevel();
     String getPhotoresValue();// dont know if here comes value or mapping state
     float getHMDTvalue();
     String publishReadings();

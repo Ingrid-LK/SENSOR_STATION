@@ -15,6 +15,8 @@ motorRunning = false; //boolean
 void motorControl::setup(){
 pinMode (motor_pin, OUTPUT);
 pinMode(pot_pin, INPUT);
+ledcSetup(0, 5000, 12); //5000khz
+ledcAttachPin(motor_pin, 0);
 //analog write/read is auto, isnt it?
 }
 
@@ -28,15 +30,13 @@ void motorControl::MotorON(){
 
 //motor is ON, read pot and set speed
     potValue = analogRead(pot_pin); //int
-    highTime = potValue;        //int, HIGH duration
-    lowTime = 4096 - potValue;  //int, LOW duration
-
     
+    // i only want to control speed with pot, dont want it to turn off the motor    
+    int motor_speed = map(potValue, 0, 4095, 2048, 4095);  // pot only controls upper half
+
+    ledcWrite(0, motor_speed);
+
    motorRunning = true;
-        digitalWrite(motor_pin, HIGH);
-        delayMicroseconds(highTime); // another alternative for delay
-        digitalWrite(motor_pin, LOW);
-        delayMicroseconds(lowTime);
 }
 
 
@@ -46,7 +46,8 @@ void motorControl::MotorON(){
     //digital write pin
 void motorControl::MotorOFF(){
 
-    digitalWrite(motor_pin, LOW);
+    ledcWrite(0, 0);
+
     motorRunning = false;
 
 }

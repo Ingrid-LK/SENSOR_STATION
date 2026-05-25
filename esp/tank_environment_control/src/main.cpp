@@ -18,16 +18,23 @@
 
 
 //pins
-const int motor_pin=12;
+/*const int motor_pin=12;
 const int pot_pin= 4;
 const int pump_pin=13;
 const int lm35pin=35;
 const int dht22pin=34;
-const int soilsensorpin=26;
+const int soilsensorpin=25;
 const int watersensorpin=23;
-const int photorespin=32;
+const int photorespin=32;*/
 
-
+const int motor_pin=17;
+const int pot_pin= 34;
+const int pump_pin=16;
+const int lm35pin=36;
+const int dht22pin=32;
+const int soilsensorpin=33;
+const int watersensorpin=23;
+const int photorespin=35;
 
 //timer variables
 //control cpp evaluate timer
@@ -43,7 +50,10 @@ readingsSystem readings;
 motorControl motorcontrol(motor_pin, pot_pin);
 PumpControl pumpcontrol(pump_pin);
 readLM35 readtemp(lm35pin);
+
+//DHT dht_read(dht22pin, DHT22);
 readDHT22 readHMDT(dht22pin);
+
 readSoilHumidity readsoil(soilsensorpin);
 readWaterLevel readWtrLevel(watersensorpin);
 readPhotoresistor readlighInt (photorespin);
@@ -62,7 +72,7 @@ const char* TOPIC_MODE  = "control/mode";
 //  Credentials for WIFI Connection 
 const char* ssid = "Cudy-4CC6";
 const char* password = "63827361CHANGE!";
-const char* mqtt_server = "192.168.1.68";
+const char* mqtt_server = "192.168.10.120";
 
 //create an instance of a mqtt client object
 WiFiClient TCP_Client;
@@ -98,7 +108,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
  its connection, it attempts to reconnect without blocking the main loop. */
 long lastReconnectAttempt = 0;
 boolean reconnect() {
-  if (client.connect("esp32_1")) {
+  if (client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false))
+
+  {
     Serial.println("hello again, world");
     //insert subscribed topics
     // subscribe with QoS 1
@@ -107,6 +119,7 @@ boolean reconnect() {
     client.subscribe(TOPIC_PUMP, 1);
     return client.connected();} else {
     Serial.println("Reconnection failed.");
+    Serial.println(client.state());
     return 0;}
 }
 
@@ -165,8 +178,8 @@ client.subscribe(TOPIC_MODE,1);
 client.subscribe(TOPIC_MOTOR,1);
 client.subscribe(TOPIC_PUMP,1);
 
-lastReconnectAttempt = 0; //dont actually know if it is still necessary after i have already written it on the top
-
+//lastReconnectAttempt = 0; //dont actually know if it is still necessary after i have already written it on the top
+Serial.println("MQTT ON");
 
 
 // init sensors and actuator pins
@@ -202,6 +215,7 @@ if (millis() - last_r_evaluate >= 500){
   String r_payload = readings.publishReadings();
   //retained message = true
   client.publish("status/sensors", r_payload.c_str(), true);
+  //Serial.println("sent sensor data");
 }
 
 
@@ -214,6 +228,7 @@ if (millis() - last_c_evaluate >= 1500){
   String c_payload = control.publishControlStatus();
   //retained message = true
   client.publish("status/control", c_payload.c_str(), true);
+  //Serial.println("sent actuator data");
 }
 
 

@@ -9,16 +9,20 @@ class readDHT22
 {
 private:
     /* data */
+    DHT dht;  // initialize DHT library
+
     int hmdt_pin;
     float hmdt_value;
 
       //timer functions
     unsigned long last_read = 0;
-    unsigned long read_interval = 500;  
+    unsigned long read_interval = 2300;  
     
 public:
     readDHT22(int pin);
     float get_hmdt();
+    
+
 };
 
 

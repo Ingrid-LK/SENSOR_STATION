@@ -1,5 +1,3 @@
-/* CODE FOUND*/
-
 #include "DHT.h"
 
 
@@ -83,4 +81,3 @@ unsigned char DHT::read()
 
 	return DHT_OK;
 }
-

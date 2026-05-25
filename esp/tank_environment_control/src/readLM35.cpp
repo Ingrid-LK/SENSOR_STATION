@@ -33,7 +33,6 @@ float raw_adc_number = 0;
             delay(10); // change here
         }
         raw_adc_number = raw_adc_number / 10.0;  // average of readings to reduce noise
-        
         // STEP 2 — Convert raw number to the voltage the LM35 is outputting
         float volts_from_sensor = raw_adc_number * (3.3 / 4095.0);
 

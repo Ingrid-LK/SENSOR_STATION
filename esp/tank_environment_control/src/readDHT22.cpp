@@ -1,8 +1,11 @@
 #include "readDHT22.h"
+//extern DHT dht_read;
+
 #include "DHT.h"
 
 
-readDHT22::readDHT22(int pin){
+readDHT22::readDHT22(int pin) : dht(pin, DHT22)
+{
 hmdt_pin = pin;
 }
 
@@ -10,29 +13,24 @@ hmdt_pin = pin;
 //if it goes bad probably should be a char 
 //and not simply float
 
-
-float readDHT22::get_hmdt(){
-
-DHT dht_read(hmdt_pin, DHT22);
-
+ float readDHT22::get_hmdt(){
  if (millis() - last_read >= read_interval) {
   last_read = millis();
-    switch(dht_read.read())
-    {
-      case DHT_OK:
-        hmdt_value=dht_read.humidity;
-      return hmdt_value;
-        break;
-      case DHT_ERR_CHECK:
-          Serial.println("DHT CHECK ERROR");break;
-      case DHT_ERR_TIMEOUT:
-          Serial.println("DHT TIMEOUT EEROR");break;
-      default:
-          Serial.println("UNKNOWN EEROR");break;
+
+   unsigned char result = dht.read();
+        if (result == DHT_OK) {
+            hmdt_value = dht.humidity;
+        } else {
+            Serial.println("DHT read failed, error: ");
+            Serial.println(result);
+        }
       }
+    
+return hmdt_value;
+     
 }
 
-}
+
 
 
 

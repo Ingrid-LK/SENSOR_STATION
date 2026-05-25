@@ -15,17 +15,20 @@ float readSoilHumidity::getSoilHMDT(){
     if (millis() - last_read >= read_interval) {
         last_read = millis();
         soil_HMDT = analogRead(sensor_pin);
+       // Serial.print("soil hmdt:");
+       // Serial.println(soil_HMDT);
+        //map(value, fromLow, fromHigh, toLow, toHigh)
         percentage_hmdt = map(soil_HMDT, 490, 4095, 100, 0);  // 4095 means dry soil, Map the analog value to a percentage value between 0 and 100
     }
-        return percentage_hmdt;
+return percentage_hmdt;
 //delay(500); //already know we gotta change here
 }
 
 //return indicator that provides the soil humidity evaluation result
 _Hstate readSoilHumidity::getSoilHMDT_state(){
-    if (soil_HMDT <= lowest_acceptable_HMDT){
+    if (soil_HMDT >= lowest_acceptable_HMDT){
     soil_state = dry;
-    } else if (soil_HMDT > max_acceptable_HMDT)
+    } else if (soil_HMDT < max_acceptable_HMDT)
     {
         soil_state = excess;
     }else {

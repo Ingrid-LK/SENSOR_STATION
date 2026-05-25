@@ -48,8 +48,10 @@ payload_received = payload;
 
 //Analyse and set flags according to the message received
 if (strcmp(topic_received, TOPIC_MODE) == 0){
-    if(payload_received.equals("man")){
-        manual_on_request= true;} else {
+    if(payload_received.equals("manual")){
+        manual_on_request= true;} else if 
+        (payload_received.equals("auto"))
+        {
         manual_on_request = false;
         }
 
@@ -191,7 +193,7 @@ String ControlSystem::publishControlStatus(){
 //Fill the json document
 // variable = (condition) ? "value if true" : "value if false";
 doc["mode"] = (manual_on_request) ? "man" : "auto"; //man or auto
-doc["pump"] = (motor_set_on) ? "on" : "off";
+doc["motor"] = (motor_set_on) ? "on" : "off";
 doc["pump"] = (pump_set_on) ? "on" : "off";
 
 // doc["pump_alarm"] = value; // on or off
