@@ -16,7 +16,8 @@ private:
 
       //timer functions
     unsigned long last_read = 0;
-    unsigned long read_interval = 2300;  
+    //big interval to avoid interferring with other pins when reading
+    unsigned long read_interval = 10000;  
     
 public:
     readDHT22(int pin);

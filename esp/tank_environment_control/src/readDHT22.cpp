@@ -24,6 +24,8 @@ hmdt_pin = pin;
             Serial.println("DHT read failed, error: ");
             Serial.println(result);
         }
+        delay(200);  // forced stabilization time to avoid corrupting other readings
+
       }
     
 return hmdt_value;

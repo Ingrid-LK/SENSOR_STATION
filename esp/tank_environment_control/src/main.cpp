@@ -31,7 +31,7 @@ const int motor_pin=17;
 const int pot_pin= 34;
 const int pump_pin=16;
 const int lm35pin=36;
-const int dht22pin=32;
+const int dht22pin=25;
 const int soilsensorpin=33;
 const int watersensorpin=23;
 const int photorespin=35;
@@ -137,7 +137,8 @@ Serial.begin(115200);
 //*******init necessary pins******* */
 readtemp.setup();
 readWtrLevel.setup();
-
+pumpcontrol.setup();
+motorcontrol.setup();
 
 
 
