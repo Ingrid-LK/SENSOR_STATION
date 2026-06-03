@@ -29,7 +29,7 @@ const int photorespin=32;*/
 
 const int motor_pin=17;
 const int pot_pin= 34;
-const int pump_pin=16;
+const int pump_pin=19;
 const int lm35pin=36;
 const int dht22pin=25;
 const int soilsensorpin=33;

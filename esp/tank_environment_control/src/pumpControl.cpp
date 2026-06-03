@@ -9,18 +9,18 @@ pump_relay_pin = pinprelay;
 
 void PumpControl::setup(){
 pinMode(pump_relay_pin, OUTPUT);
-digitalWrite(pump_relay_pin,HIGH); //after initializing , make sure PUMP is off by default
+//digitalWrite(pump_relay_pin,HIGH); //after initializing , make sure PUMP is off by default
 }
 
 
 void PumpControl::PumpON(){
-digitalWrite(pump_relay_pin,LOW); //PUMP is on
+digitalWrite(pump_relay_pin,HIGH); //PUMP is on
 
 }
 
     
 void PumpControl::PumpOFF(){
-digitalWrite(pump_relay_pin,HIGH); // PUMP is off 
+digitalWrite(pump_relay_pin,LOW); // PUMP is off 
 
 
 }
