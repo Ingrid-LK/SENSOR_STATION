@@ -7,7 +7,7 @@
 readLM35::readLM35(int pin_LM35){
 Temp_pin = pin_LM35;
 diode_offset_voltage = 0.87; //float type (put in header file); 2 diodes ~0.4 voltage drop each, my actual value measured
-maximum_acceptable_temp = 35; //temperature can not be higher than 35 degrees
+maximum_acceptable_temp = 26; //temperature can not be higher than 26 degrees
 Temp_State = normal_temp;
 }
 

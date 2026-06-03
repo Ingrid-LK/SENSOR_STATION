@@ -216,7 +216,7 @@ if (millis() - last_r_evaluate >= 500){
   String r_payload = readings.publishReadings();
   //retained message = true
   client.publish("status/sensors", r_payload.c_str(), true);
-  //Serial.println("sent sensor data");
+  //Serial.println(r_payload); //debugging analog pins
 }
 
 

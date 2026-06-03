@@ -21,8 +21,8 @@ _State Temp_State;
 
  //timer functions
 unsigned long last_read = 0;
-unsigned long read_interval = 2000;  
-
+unsigned long read_interval = 1000;   //previous was 2000
+ 
 public:
 readLM35(int pin);
 void setup();
