@@ -15,6 +15,7 @@ public:
     void onMessageReceived(char* topic , String payloadRec);
     void motorControl();
     void pumpControl();
+    void pumpAlarm();
     void controlevaluate();
     String publishControlStatus();
 
@@ -34,9 +35,15 @@ bool pump_on_request;
 bool motor_on_request;
 bool manual_on_request;
 
+
 //flags set after conditions evaluation
 bool pump_set_on;
 bool motor_set_on;
+bool pump_man_mode_alarm_flag;
+bool pump_auto_mode_alarm_flag;
+
+
+
 
 int modebool; //contains the mode of control; 0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as flag)
 _State Temp_status;

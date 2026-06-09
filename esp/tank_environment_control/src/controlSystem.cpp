@@ -160,6 +160,33 @@ if (manual_on_request == true){
     }
 
 
+void ControlSystem::pumpAlarm(){
+
+
+//if Manual Mode ^ WATER LEVEL LOW ^ PUMP ON REQUEST = TRUE --> SET ALARM flag
+// This would be a extreme priority alarm
+if (manual_on_request == true && pump_set_on == true && water_level_status == full){
+    pump_man_mode_alarm_flag = true;
+} else {pump_man_mode_alarm_flag =false;}
+
+
+
+
+
+// this is more like a warning because we alredy now the pump will not turn on
+//but the gist is that we want it to turn on
+if (manual_on_request == false && water_level_status == empty && soil_hmdt_status == dry){
+    pump_auto_mode_alarm_flag = true;
+} else {pump_auto_mode_alarm_flag= false;}
+
+
+
+}
+
+
+
+
+
 
 
 
@@ -183,6 +210,7 @@ if (manual_on_request == true){
 void ControlSystem::controlevaluate(){
 motorControl();
 pumpControl();
+pumpAlarm();
 }
 
 // Method that organizes control information that will be published via MQTT
@@ -195,9 +223,10 @@ String ControlSystem::publishControlStatus(){
 doc["mode"] = (manual_on_request) ? "man" : "auto"; //man or auto
 doc["motor"] = (motor_set_on) ? "on" : "off";
 doc["pump"] = (pump_set_on) ? "on" : "off";
+doc["pump_manual_alarm"] = (pump_man_mode_alarm_flag) ? "on" : "off";
+doc["pump_auto_alarm"] = (pump_auto_mode_alarm_flag) ? "on" : "off";
 
-// doc["pump_alarm"] = value; // on or off
- //  doc["motor alarm"] = value; // on or 
+
 
 String ControlOutput; 
 
