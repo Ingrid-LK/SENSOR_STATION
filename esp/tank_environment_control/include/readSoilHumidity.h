@@ -17,7 +17,7 @@ private:
     /* data */
     int sensor_pin;
     double soil_HMDT;
-    //analogRead=4095 dry soil; from 2120 wet/good; from 1470 excess water
+    //analogRead=4095 dry soil; from 3000 upwards dry; from 1700 excess water
     double lowest_acceptable_HMDT;
     double max_acceptable_HMDT;
     int percentage_hmdt;

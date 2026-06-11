@@ -45,7 +45,7 @@ String readingsSystem::getWaterLevel(){
     //return/acess the value from level sensor
     water_value = readWtrLevel.getWaterlevel();
     if (water_value == empty){
-        water_level= "empty";
+        water_level= "low"; // changed empty to low because in real life the sensor was put higher than expected
     } else if (water_value == full){
         water_level= "full";
     }
@@ -61,7 +61,7 @@ String readingsSystem::getSoilHMDTvalue(){
     case dry: return "dry";
     case good: return "good";
     case excess: return "excess";
-    default:    return "unkown";
+    default:    return "unknown";
     }
 }
 

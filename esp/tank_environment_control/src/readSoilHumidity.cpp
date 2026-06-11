@@ -5,7 +5,8 @@
 //class construction
 readSoilHumidity::readSoilHumidity(int pin){
 sensor_pin = pin;
-lowest_acceptable_HMDT = 2500; // analog reading
+lowest_acceptable_HMDT = 3000; // analog reading
+max_acceptable_HMDT = 1700; //analog reading
 soil_state = dry;
 }
 
