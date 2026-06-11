@@ -165,7 +165,7 @@ void ControlSystem::pumpAlarm(){
 
 //if Manual Mode ^ WATER LEVEL LOW ^ PUMP ON REQUEST = TRUE --> SET ALARM flag
 // This would be a extreme priority alarm
-if (manual_on_request == true && pump_set_on == true && water_level_status == full){
+if (manual_on_request == true && pump_set_on == true && water_level_status == empty){
     pump_man_mode_alarm_flag = true;
 } else {pump_man_mode_alarm_flag =false;}
 

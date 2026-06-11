@@ -25,7 +25,7 @@ private:
 char* topic_received;
 String payload_received;
 
-// my topics
+// my to be received topics
 const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";
