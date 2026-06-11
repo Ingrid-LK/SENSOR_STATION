@@ -55,7 +55,7 @@ return water_level;
 String readingsSystem::getSoilHMDTvalue(){
     //return/acess the value from soil 
     readsoil.getSoilHMDT();
-    soil_hmdt_value = readsoil.getSoilHMDT_state();
+    soil_state_string = readsoil.getSoilHMDT_state();
     switch (soil_state_string)
     {
     case dry: return "dry";
