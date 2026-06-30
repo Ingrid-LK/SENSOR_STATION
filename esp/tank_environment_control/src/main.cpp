@@ -111,6 +111,7 @@ boolean reconnect() {
   if (client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false))
 
   {
+    client.publish("status/connection", "esp32 online", true); // to publish esp online again
     Serial.println("hello again, world");
     //insert subscribed topics
     // subscribe with QoS 1
@@ -174,6 +175,8 @@ client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"e
 
 //subscribe to control topics
 //subscribe(topic,qos)
+client.publish("status/connection", "esp32 online", true); // to publish esp as online 
+
 // subscribe with QoS 1
 client.subscribe(TOPIC_MODE,1);
 client.subscribe(TOPIC_MOTOR,1);
