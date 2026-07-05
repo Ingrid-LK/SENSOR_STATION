@@ -20,23 +20,18 @@ private:
   String water_level;
   String soil_hmdt_value;
   String lighInt;
-  //String soil_hmdt_state_value;
-  //_Hstate soil_state_string;
+  
   _Hstate soil_state_string;
   float hmdt_value;
-  _waterstate water_value; //dont know if i just dont get the state and send it via storage in other variable
+  _waterstate water_value; 
 
 public:
-    //temperature reading
-    //humidity reading
-    //water level
-    //publishing to mqtt broker
     readingsSystem();
     void evaluate();
     float getTempValue();
     String getSoilHMDTvalue();
     String getWaterLevel();
-    String getPhotoresValue();// dont know if here comes value or mapping state
+    String getPhotoresValue();
     float getHMDTvalue();
     String publishReadings();
 

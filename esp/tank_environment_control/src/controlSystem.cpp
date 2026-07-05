@@ -4,7 +4,7 @@
 
 
 #include "motorControl.h"
-extern motorControl motorcontrol; //so the compiler can find the object initialized in the main.cpp
+extern motorControl motorcontrol; //extern, so the compiler can find the object initialized in the main.cpp
 
 #include "PumpControl.h"
 extern PumpControl pumpcontrol;
@@ -20,11 +20,11 @@ extern readWaterLevel readWtrLevel;
 
 
 
-//class construction
+//define the constructor declaration
 ControlSystem::ControlSystem(){
 
-//initialize by everything off
-modebool= 1; //0= Manual Control Mode; 1=Auto Control Mode (received via mqtt as flag)
+//initialize every flag as false
+modebool= 1; //0= Manual Control Mode; 1=Auto Control Mode (received via mqtt)
 pump_on_request = false;
 motor_on_request = false;
 manual_on_request = false;
@@ -32,18 +32,14 @@ pump_set_on = false;
 motor_set_on = false;
 }
 
-//receive control instructions and organize mqtt messages received
+//receive and organize mqtt control messages
 //already called by callback function in subscribe
 void ControlSystem::onMessageReceived( char* topic, String payload){
 
-    /*analyze the mqtt messages received, 
-then set flags used in other voids
-//returnnnnn data so it can be accessed by other functions
-////In Arduino, comparing a String with == to a string literal can work 
-but it's considered unreliable*/
+    /*analyze the mqtt messages received,  then set flags used in other methods and return data so it can be accessed by other functions
+     In Arduino, comparing a String with ""=="" to a string literal can work  but it's considered unreliable*/
 
-//member variables are where we store the data we use
-topic_received = topic; //you're making it a string, can you do it or call a char instead?
+topic_received = topic; 
 payload_received = payload;
 
 //Analyse and set flags according to the message received
@@ -82,7 +78,7 @@ Temp_status = readtemp.gettempEval();
     //if auto mode
 if (manual_on_request == false){
         //if temperatature is not within the acceptable threshold
-            if(Temp_status == high_temp){ //these variables gotta be extern or public in class
+            if(Temp_status == high_temp){ 
             //call function that turns on motor 
             motorcontrol.MotorON();
             motor_set_on = true;}
@@ -114,11 +110,9 @@ if (manual_on_request == true){
 
 
 //control pump
-// tentar usar switch case aqui, just for vibes
 void ControlSystem::pumpControl(){
 water_level_status = readWtrLevel.getWaterlevel();
 soil_hmdt_status= readsoil.getSoilHMDT_state(); 
-//falta get humidity and water level read
 
 //if auto mode
 if (manual_on_request == false){
@@ -127,7 +121,7 @@ if (manual_on_request == false){
         {  /* code */
          pumpcontrol.PumpON();
          pump_set_on = true;
-        } else if (water_level_status == empty || soil_hmdt_status == excess) //|| soul_hmdt_status == good; i still dont think humidity should turn off my water pump
+        } else if (water_level_status == empty || soil_hmdt_status == excess) 
         {
             //if soil humidity high [within the acceptable threshold]
         pumpcontrol.PumpOFF();
@@ -135,12 +129,13 @@ if (manual_on_request == false){
         }
       
     }
+
 //if water tank level low and soil humidity low
 //if (manual_on_request == false && alarmflagset)  
 //pumpcontrol.PumpAlarm(); //you stop pump and forward an alarm message
     
 
-    // if manual mode
+    
     // if manual mode
 if (manual_on_request == true){
         //if there is on request received 
@@ -152,8 +147,6 @@ if (manual_on_request == true){
         pumpcontrol.PumpOFF(); 
         pump_set_on = false;}
         
-        //if waterlevel is low and you try to turn on the pump  
-//        pumpcontrol.PumpAlarmManual();
 
         }
 
@@ -164,17 +157,13 @@ void ControlSystem::pumpAlarm(){
 
 
 //if Manual Mode ^ WATER LEVEL LOW ^ PUMP ON REQUEST = TRUE --> SET ALARM flag
-// This would be a extreme priority alarm
 if (manual_on_request == true && pump_set_on == true && water_level_status == empty){
     pump_man_mode_alarm_flag = true;
 } else {pump_man_mode_alarm_flag =false;}
 
 
-
-
-
-// this is more like a warning because we alredy now the pump will not turn on
-//but the gist is that we want it to turn on
+//if Auto Mode ^ WATER LEVEL LOW ^ PUMP ON REQUEST = TRUE --> SET ALARM flag
+// this is more like a warning because we alredy now the pump will not automatically turn on
 if (manual_on_request == false && water_level_status == empty && soil_hmdt_status == dry){
     pump_auto_mode_alarm_flag = true;
 } else {pump_auto_mode_alarm_flag= false;}
@@ -188,24 +177,6 @@ if (manual_on_request == false && water_level_status == empty && soil_hmdt_statu
 
 
 
-
-
-
-
-
-/* what in essence gotta be done
-  if (String(topic) == "esp32/output") {
-    Serial.print("Changing output to ");
-    if(messageTemp == "on"){
-      Serial.println("on");
-      digitalWrite(ledPin, HIGH);
-    }
-    else if(messageTemp == "off"){
-      Serial.println("off");
-      digitalWrite(ledPin, LOW);
-
-*/
-
 //orchestrate functions calling
 void ControlSystem::controlevaluate(){
 motorControl();
@@ -213,14 +184,14 @@ pumpControl();
 pumpAlarm();
 }
 
-// Method that organizes control information that will be published via MQTT
+// Organizes control information that will be published via MQTT in JSON TEXT
 String ControlSystem::publishControlStatus(){
     
- JsonDocument doc;  // where my data will live
+ JsonDocument doc;  // where data will be written to 
 
 //Fill the json document
 // variable = (condition) ? "value if true" : "value if false";
-doc["mode"] = (manual_on_request) ? "man" : "auto"; //man or auto
+doc["mode"] = (manual_on_request) ? "man" : "auto"; 
 doc["motor"] = (motor_set_on) ? "on" : "off";
 doc["pump"] = (pump_set_on) ? "on" : "off";
 doc["pump_manual_alarm"] = (pump_man_mode_alarm_flag) ? "on" : "off";
@@ -228,7 +199,7 @@ doc["pump_auto_alarm"] = (pump_auto_mode_alarm_flag) ? "on" : "off";
 
 
 
-String ControlOutput; 
+String ControlOutput; // destination string for the updates
 
 serializeJson(doc, ControlOutput);
 

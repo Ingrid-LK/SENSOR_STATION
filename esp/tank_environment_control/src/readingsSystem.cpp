@@ -23,29 +23,33 @@ extern readPhotoresistor readlighInt;
 
 
 
-//class constructor
+//define the constructor declaration
 readingsSystem::readingsSystem(){
 }
 
+
+//Return/access sensor readings
+
 float readingsSystem::getTempValue(){
-    //return/acess the value from lm35 sensor
+
+    //access the value from lm35 sensor
     temp_value = readtemp.readTemp();
     return temp_value;
 }
 
 
 float readingsSystem::getHMDTvalue(){
-    //return/acess the value from DHT22 sensor
+    //access the value from DHT22 sensor
     hmdt_value = readHMDT.get_hmdt();
     return hmdt_value;
 
 }
 
 String readingsSystem::getWaterLevel(){
-    //return/acess the value from level sensor
+    //access the value from level sensor
     water_value = readWtrLevel.getWaterlevel();
     if (water_value == empty){
-        water_level= "low"; // changed empty to low because in real life the sensor was put higher than expected
+        water_level= "low"; 
     } else if (water_value == full){
         water_level= "full";
     }
@@ -53,7 +57,7 @@ return water_level;
 }
 
 String readingsSystem::getSoilHMDTvalue(){
-    //return/acess the value from soil 
+    //access the value from soil 
     readsoil.getSoilHMDT();
     soil_state_string = readsoil.getSoilHMDT_state();
     switch (soil_state_string)
@@ -66,7 +70,7 @@ String readingsSystem::getSoilHMDTvalue(){
 }
 
 String readingsSystem::getPhotoresValue(){
-    //return/acess the value from 
+    //access the value from 
     readlighInt.readPhoto();
     lighInt = readlighInt.getLightEval();
     return lighInt;
@@ -75,13 +79,12 @@ String readingsSystem::getPhotoresValue(){
 //orchestrate functions calling
 void readingsSystem::evaluate(){
         getTempValue();
-//        getSoilHMDTvalue(); //maybe delete this
         getWaterLevel();
         getPhotoresValue();
         getHMDTvalue();
 }
 
-
+// Organizes control information that will be published via MQTT in JSON TEXT
 String readingsSystem::publishReadings(){
     JsonDocument readsdoc; 
 
@@ -91,8 +94,6 @@ String readingsSystem::publishReadings(){
 
     readsdoc["tank_level"]= water_level;
 
-    
-   // readsdoc["soil_humidity"]=soil_hmdt_value;
 
     readsdoc["soil_humidity"]= getSoilHMDTvalue();
 
@@ -100,7 +101,7 @@ String ReadingsOutput; // destination string for the updates
 
 serializeJson(readsdoc, ReadingsOutput);
 
-return ReadingsOutput;
+return ReadingsOutput; //String that will be published
 
 }
 

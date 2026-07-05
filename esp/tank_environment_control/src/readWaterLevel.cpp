@@ -1,6 +1,7 @@
 #include "readWaterLevel.h"
 #include <Arduino.h>
 
+//define the constructor declaration
 readWaterLevel::readWaterLevel(int sensor_pin){
 level_sensor_pin= sensor_pin;
 water_level = 0;// 1 <-> water present; 0<-> water not present

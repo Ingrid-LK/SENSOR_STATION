@@ -1,4 +1,4 @@
-/* CODE FOUND*/
+
 
 #ifndef DHT_h
 #define DHT_h

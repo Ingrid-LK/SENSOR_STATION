@@ -2,7 +2,7 @@
 #if !defined(CONTROL_SYSTEM_H)
 #define CONTROL_SYSTEM_H
 
-#include "readLM35.h" // so we guarantee Temp_status is persistently well defined
+#include "readLM35.h" // so it's guaranteed Temp_status is persistently well defined
 #include "readSoilHumidity.h"
 #include "readWaterLevel.h"
 #include <Arduino.h>
@@ -21,11 +21,10 @@ public:
 
 private:
     /* data */
-
 char* topic_received;
 String payload_received;
 
-// my to be received topics
+// topics to be received
 const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";

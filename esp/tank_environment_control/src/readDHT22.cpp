@@ -4,14 +4,14 @@
 #include "DHT.h"
 
 
+//define the constructor declaration
 readDHT22::readDHT22(int pin) : dht(pin, DHT22)
 {
 hmdt_pin = pin;
 }
 
 
-//if it goes bad probably should be a char 
-//and not simply float
+// read humidity values 
 
  float readDHT22::get_hmdt(){
  if (millis() - last_read >= read_interval) {
@@ -24,7 +24,7 @@ hmdt_pin = pin;
             Serial.println("DHT read failed, error: ");
             Serial.println(result);
         }
-        delay(200);  // forced stabilization time to avoid corrupting other readings
+        delay(200);  // forced stabilization time to avoid corrupting other ADC readings
 
       }
     

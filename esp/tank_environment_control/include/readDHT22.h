@@ -16,7 +16,8 @@ private:
 
       //timer functions
     unsigned long last_read = 0;
-    //big interval to avoid interferring with other pins when reading
+    
+    //big interval to avoid interferring with other pins when reading DHT22
     unsigned long read_interval = 10000;  
     
 public:

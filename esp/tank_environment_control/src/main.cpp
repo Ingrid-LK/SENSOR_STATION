@@ -2,7 +2,7 @@
 #include <WiFi.h> //wifi library
 #include <PubSubClient.h> //mqtt 
 
-//custom objects
+//custom classes
 #include "ControlSystem.h"
 #include "motorControl.h"
 #include "PumpControl.h"
@@ -17,15 +17,8 @@
 
 
 
-//pins
-/*const int motor_pin=12;
-const int pot_pin= 4;
-const int pump_pin=13;
-const int lm35pin=35;
-const int dht22pin=34;
-const int soilsensorpin=25;
-const int watersensorpin=23;
-const int photorespin=32;*/
+//define necessary pins
+
 
 const int motor_pin=17;
 const int pot_pin= 34;
@@ -64,7 +57,7 @@ readPhotoresistor readlighInt (photorespin);
 
 
 
-// Connections
+// Topics subscribed to
 const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";
@@ -93,7 +86,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(payloadRec);
 
   //direct message received to control block
-  control.onMessageReceived(topic, payloadRec); //from control cpp
+  control.onMessageReceived(topic, payloadRec); //to control.cpp
 }
 
 
@@ -147,11 +140,11 @@ motorcontrol.setup();
 Serial.println(); 
 Serial.print("Connecting to ");Serial.println(ssid);
 
-WiFi.mode(WIFI_STA); // esp connects to access point (in this case, a router)
+WiFi.mode(WIFI_STA); // esp connects to access point (in this project, a router)
 WiFi.begin(ssid, password);
 
 while (WiFi.status() != WL_CONNECTED) {
-  delay(500); //maybe since it's setup, only happens once, there isn't a big issue for a delay in here, it doesnt block much 
+  delay(500);  
   Serial.print(".");}
   Serial.println("");
   Serial.println("WiFi connected");
@@ -165,9 +158,6 @@ client.setCallback(callback); //call back function so we can receive messages
 
 //boolean connect (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])
 //connecting by providing our mqtt id
-//gotta check the parameters because i actually want the 
-//I want a last will message 
-//i want as soon as someone connect to be able to receive the last topic
 //QOS = 1 since is the standard in IOT
 //clean session false — broker remembers the client and queues any missed QoS 1 messages while it was offline, delivering them when it reconnects
 client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false);
@@ -182,11 +172,9 @@ client.subscribe(TOPIC_MODE,1);
 client.subscribe(TOPIC_MOTOR,1);
 client.subscribe(TOPIC_PUMP,1);
 
-//lastReconnectAttempt = 0; //dont actually know if it is still necessary after i have already written it on the top
-Serial.println("MQTT ON");
+Serial.println("MQTT ON"); //for debugging reasons
 
 
-// init sensors and actuator pins
 
 }
 
