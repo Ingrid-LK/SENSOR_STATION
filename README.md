@@ -63,7 +63,7 @@ The control mode is selected in Node-RED as either <b>Automatic</b> or <b>Manual
 - IDE (PlatformIO)
 
 ## Project Electrical Schematics
-
+<img src= "/media/MQTT_PROJ.svg" alt="schematics" style="height::300px; width:400px;">
 ## MQTT TOPICS
 
 ## Node-RED LOGIC
