@@ -8,6 +8,9 @@ An MQTT-powered system with real-time sensor data monitoring, state evaluation, 
 The system is inspired by the automated control of a greenhouse used for growing plants and vegetables. Different sensors and actuators are employed to create two independent control sections that together make up the complete system:
 </p>
 
+<img src= "media\Station-division.png" alt="station_divisions" style="height::300px; width:400px;"/>
+
+
 
 ## Features
 
@@ -16,7 +19,7 @@ The control mode is selected in Node-RED as either <b>Automatic</b> or <b>Manual
 
 </p>
 
-<!---insert project overview diagram--->
+<img src= "media\project_2_overview.svg" alt="project_overview" style="height::400px; width:600px;"/>
 
 
 ## Setup
@@ -63,22 +66,187 @@ The control mode is selected in Node-RED as either <b>Automatic</b> or <b>Manual
 - IDE (PlatformIO)
 
 ## Project Electrical Schematics
-<img src= "/media/MQTT_PROJ.svg" alt="schematics" style="height::300px; width:400px;">
+<img src= "media\MQTT_PROJ.svg" alt="schematics" style="height::400px; width:500px;"/>
+
+
+<p align="justify">
+The following paragraphs explain the rationale behind the design choices and mounting considerations for some of the key components shown in the electrical schematics.
+</p>
+
+<p align="justify">
+To measure temperature, while the DHT22 could also have been used,  to diversify the components used, a dedicated sensor , the LM35 , was chosen for it.
+The LM35 is capable of measuring both positive and negative temperatures, producing an output voltage proportional to temperature according to the datasheet (Texas Instruments):
+
+<b>
+
+```
+VOUT = 10 mV/°C × T
+```
+
+</b>
+
+</p>
+
+<p align="justify">
+Since the ESP32's ADC cannot measure negative voltages, to overcome this limitation the LM35's GND pin was raised using two diodes in series, shifting the entire output range upward. A resistor was added to the Vout pin to provide a current path that keeps the diodes forward biased, ensuring a stable offset voltage.
+</p>
+
+<p align="justify">
+As a result, the LM35 outputs approximately 0.87 V at 0 °C  (the measured voltage drop across the two diodes) instead of 0 V. This leaves room for temperatures below 0 °C to be represented as positive voltages that can be safely measured by the ESP32, effectively enabling the LM35's full temperature measurement range.
+</p>
+
+
+<p align="justify">
+The DC motor is controlled using a MOSFET because an ESP32 GPIO pin cannot supply enough current to drive the motor directly. Although this project uses a small DC motor, driving an inductive load directly from a microcontroller pin is considered poor design practice. Instead, the MOSFET acts as an electronic switch, allowing the motor to be powered safely from an external supply while being controlled by the ESP32.
+</p>
+
+
+<p align="justify">
+A flyback diode was connected across the motor to protect the MOSFET from the high voltage spike (back electromotive force, or back EMF) generated when the motor stops running. This also helps protect the ESP32 and improves the reliability of the circuit.
+</p>
+
+
+
 ## MQTT TOPICS
+
+<p align="justify">
+Regarding the data published by the ESP32, instead of using a separate MQTT topic for each variable, all measurements (and the exact same process for the status of the actuators) were grouped into a single JSON payload using the <b>"ArduinoJson"</b> library. The MQTT topic serves only as the message address, while the JSON payload contains all the data in a single transmission, resulting in a cleaner and more efficient communication structure.
+</p>
+
+
+
+<p align="justify">
+In this project, Node-RED subscribes to that topic and receives the complete JSON message. The payload is then automatically parsed into a JavaScript object, allowing individual values to be accessed easily through their corresponding properties <b> (e.g., msg.payload.temperature or msg.payload.humidity).
+</b></p>
+
+
+
+<img src= "media\mqtt_topics.svg" alt="mqtt_topics" style="height::300px; width:600px;"/>
+
+## ESP32 MQTT CONFIGURATION
+
+<p align="justify">
+To connect as a client the following parameters were set in the client connect function in the <b>“PubSubClient”</B> library:
+</p>
+
+
+<p align="justify">
+
+boolean <b>connect</b> (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])</p>
+<p align="justify">
+<b> Parameters </b>
+</p>
+
+
+
+<p align="justify"> <b>• clientID, </b> <i>const char[]</i> : esp32_1, the client ID to use when connecting to the server
+</p>
+
+
+<p align="justify">
+<b>• Credentials </b>
+</p>
+
+<div style="text-align: justify">
+
+- <b>username,</b> <i>const char[]</i> : the username used.
+</div>
+
+
+<div style="text-align: justify">
+
+- <b>password,</b> <i>const char[]</i> : the username used.
+</div>
+
+
+<p align="justify">
+<b>• Will</b>
+</p>
+<div style="text-align: justify">
+
+<div style="text-align: justify">
+
+- <b>willTopic,</b> <i>const char[]</i> : status/connection,  the topic to be used by the will message.
+</div>
+
+<div style="text-align: justify">
+
+- <b>willQoS, </b> <i>int: 0,1 or 2 </i> : 1
+</div>
+
+<div style="text-align: justify">
+
+- <b>willRetain, </b> <i>boolean</i> : true,  the will message should be published with the retain flag.
+</div>
+
+<div style="text-align: justify">
+
+- <b>willMessage,</b> <i>const char[]</i> : “esp32 offline” , the payload of the will message.
+</div>
+
+<p align="justify">
+<b>• cleanSession,</b> <i>boolean</i>: false, making sure every message of the client  is delivered, isn’t forgotten by the broker when disconnected.</p>
+
 
 ## Node-RED LOGIC
 
-### Data Preparation 
+<p align="justify">
+The <b>“ArduinoJson”</b> library serializes the data into a JSON string, which is then transmitted via MQTT. In Node-RED, the MQTT In node (configured to Auto-Detect) recognizes the JSON payload and automatically parses it into a JavaScript object. As a result, individual values can be accessed using dot notation <b>(e.g., msg.payload.pump and msg.payload.motor).</b>
+</p>
 
-### Node-RED --> InfluxDB
 
-### Alarms
+<p align="justify">
+The alarm logic begins with a dashboard button whose state is stored in the global flow variable <b>´ackValue´</b>. A Function node is employed to then evaluate this variable together with the values of the <b>´pump_alarm_manual´ and  ´pump_alarm_auto´</b> payloads. Based on these inputs, it determines the appropriate output for the Template node, either displaying an alarm message, displaying no alarm message, or hiding the alarm after it has been acknowledged by the user.
+</p>
+
+
+### Node-RED → InfluxDB
+
+<p align="justify">
+InfluxDB provides a native <b>HTTP Write API</b>. Since the available Node-RED nodes do not support the  version of  InfluxDB used in this project (version 3), data was written from Node-RED to InfluxDB by sending HTTP POST requests to the <b><i>/api/v2/write endpoint.</i></b> 
+</p>
+
+<img src= "media\node_influx_flowchart.svg" alt="node_red_influx_flow" style="height::300px; width:400px;"/>
 
 ## GRAFANA
 
 <p align="justify">
-JUST EXPLAIN THE FLUX INSTRUCTIONS USED TO GATHER THE DATA
+There are two buckets setup in InfluxDB:   "Env_Data_Monitor" and  "Watering_Monitor" . Each bucket is used to record the following data:
 </p>
+
+<p align="justify">
+<b>Env_Data_Monitor</b> → temperature, air humidity, ambient light, fan status, control mode
+</p>
+
+<p align="justify">
+<b>Watering_Monitor</b> → write soil humidity, tank level, pump status, control mode
+</p>
+
+
+<p align="justify">
+To retrieve data from the buckets, when a field contains a string, the Flux query follows the logic shown below:
+</p>
+
+```
+from(bucket: "Watering_Monitor")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_field"] == "soil_humidity")
+
+```
+
+<p align="justify">
+In contrast, to retrieve data from the buckets, when a field contains numerical data, the Flux query follows the logic shown below:
+</p>
+
+```
+from(bucket: "Env_Data_Monitor")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_field"] == "temperature")
+  |> aggregateWindow(every: 5s, fn: last, createEmpty: false)
+  |> yield(name: "last")
+
+```
+
 
 ## MEDIA
 
