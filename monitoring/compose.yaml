@@ -38,13 +38,13 @@ services:
       - monitoringNetwork
       
 
-#We must add this in the end when named volumes have been used
+#Named volumes used/created
 volumes:
   grafana_2026_data:
   influxdb_data:
 
 
-# in the future we gotta add this to expose the container 
+# expose the container's network 
 networks:
   monitoringNetwork:
     external: true
