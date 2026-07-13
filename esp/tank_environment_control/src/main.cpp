@@ -12,7 +12,7 @@
 #include "readWaterLevel.h"
 #include "readPhotoresistor.h"
 #include "readingsSystem.h"
-
+#include "credentials.h"
 
 
 
@@ -62,10 +62,7 @@ const char* TOPIC_PUMP  = "control/pump";
 const char* TOPIC_MOTOR = "control/motor";
 const char* TOPIC_MODE  = "control/mode";
 
-//  Credentials for WIFI Connection 
-const char* ssid = "Cudy-4CC6";
-const char* password = "63827361CHANGE!";
-const char* mqtt_server = "192.168.10.120";
+
 
 //create an instance of a mqtt client object
 WiFiClient TCP_Client;
@@ -101,7 +98,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
  its connection, it attempts to reconnect without blocking the main loop. */
 long lastReconnectAttempt = 0;
 boolean reconnect() {
-  if (client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false))
+  if (client.connect("esp32_1",mqtt_user,mqtt_pass,"status/connection",1,true,"esp 32 offline",false))
 
   {
     client.publish("status/connection", "esp32 online", true); // to publish esp online again
@@ -138,10 +135,10 @@ motorcontrol.setup();
 
 //***************init WiFi connection**********************
 Serial.println(); 
-Serial.print("Connecting to ");Serial.println(ssid);
+Serial.print("Connecting to ");Serial.println(wifi_ssid);
 
 WiFi.mode(WIFI_STA); // esp connects to access point (in this project, a router)
-WiFi.begin(ssid, password);
+WiFi.begin(wifi_ssid, wifi_password);
 
 while (WiFi.status() != WL_CONNECTED) {
   delay(500);  
@@ -160,7 +157,7 @@ client.setCallback(callback); //call back function so we can receive messages
 //connecting by providing our mqtt id
 //QOS = 1 since is the standard in IOT
 //clean session false — broker remembers the client and queues any missed QoS 1 messages while it was offline, delivering them when it reconnects
-client.connect("esp32_1","ing_at_home","limitless","status/connection",1,true,"esp 32 offline",false);
+client.connect("esp32_1",mqtt_user,mqtt_pass,"status/connection",1,true,"esp 32 offline",false);
 
 
 //subscribe to control topics
