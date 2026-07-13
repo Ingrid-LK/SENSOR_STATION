@@ -8,7 +8,9 @@ An MQTT-powered system with real-time sensor data monitoring, state evaluation, 
 The system is inspired by the automated control of a greenhouse used for growing plants and vegetables. Different sensors and actuators are employed to create two independent control sections that together make up the complete system:
 </p>
 
+<p align="center">
 <img src= "media\Station-division.png" alt="station_divisions" style="height::300px; width:400px;"/>
+</p>
 
 
 
@@ -249,6 +251,13 @@ from(bucket: "Env_Data_Monitor")
 
 
 ## MEDIA
+
+![](/media/fan_auto_mode.gif)
+
+
+![](/media/pump_operation.gif)
+
+
 
 ## IMPROVEMENTS 
 
