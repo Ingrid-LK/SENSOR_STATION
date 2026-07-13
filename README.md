@@ -21,8 +21,9 @@ The control mode is selected in Node-RED as either <b>Automatic</b> or <b>Manual
 
 </p>
 
+<p align="center">
 <img src= "media\project_2_overview.svg" alt="project_overview" style="height::400px; width:600px;"/>
-
+</p>
 
 ## Setup
 ### Hardware
@@ -68,8 +69,9 @@ The control mode is selected in Node-RED as either <b>Automatic</b> or <b>Manual
 - IDE (PlatformIO)
 
 ## Project Electrical Schematics
+<p align="center">
 <img src= "media\MQTT_PROJ.svg" alt="schematics" style="height::400px; width:500px;"/>
-
+</p>
 
 <p align="justify">
 The following paragraphs explain the rationale behind the design choices and mounting considerations for some of the key components shown in the electrical schematics.
@@ -122,8 +124,9 @@ In this project, Node-RED subscribes to that topic and receives the complete JSO
 </b></p>
 
 
-
+<p align="center">
 <img src= "media\mqtt_topics.svg" alt="mqtt_topics" style="height::300px; width:600px;"/>
+</p>
 
 ## ESP32 MQTT CONFIGURATION
 
@@ -208,7 +211,9 @@ The alarm logic begins with a dashboard button whose state is stored in the glob
 InfluxDB provides a native <b>HTTP Write API</b>. Since the available Node-RED nodes do not support the  version of  InfluxDB used in this project (version 3), data was written from Node-RED to InfluxDB by sending HTTP POST requests to the <b><i>/api/v2/write endpoint.</i></b> 
 </p>
 
+<p align="center">
 <img src= "media\node_influx_flowchart.svg" alt="node_red_influx_flow" style="height::300px; width:400px;"/>
+</p>
 
 ## GRAFANA
 
