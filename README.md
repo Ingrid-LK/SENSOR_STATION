@@ -160,7 +160,7 @@ boolean <b>connect</b> (clientID, [username, password], [willTopic, willQoS, wil
 
 <div style="text-align: justify">
 
-- <b>password,</b> <i>const char[]</i> : the username used.
+- <b>password,</b> <i>const char[]</i> : the password used.
 </div>
 
 
