@@ -107,19 +107,3 @@ return ReadingsOutput; //String that will be published
 
 
 
-// now create a
-//getAllReadings() //this is the thing that will be called in the main.cpp
-                //it will encapsulate everything and you wont need to call each of them
-
-//that organizes all the data in a array and then in the json document
-//that will be sent via mqtt
-
-/*
-//publish sensor data
-readingsSystem::publishReadings(){
-    //send sensor data gathered by the previous functions
-    //via mqtt
-    }
-
-
-*/
